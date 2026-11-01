@@ -861,7 +861,7 @@ export default function App() {
                     <span>2021 – 2023</span>
                   </div>
                   <h3 className="text-xl sm:text-2xl font-bold text-[var(--ink)] leading-snug mb-5 sm:mb-6">
-                    Master's in <span className="text-[var(--accent)]">{siteData.education.degrees[0].title}</span>
+                    Master's in <span className="text-[var(--accent)]">{siteData.education.degrees[0].title}</span> (MSc)
                   </h3>
                   <p className="edu-meta text-xs font-[var(--ui)] text-[var(--muted)] text-left">
                     {siteData.education.degrees[0].org} · {siteData.education.degrees[0].place}
