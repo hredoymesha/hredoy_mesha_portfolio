@@ -65,7 +65,7 @@ export function ContactSection({ email, activeTab, onTabChange }: ContactSection
 
       if (res.ok && data.success && data.delivered !== false) {
         setStatus('success');
-        setStatusMessage(`Your message has been delivered to ${email}. Thank you!${data.debug ? ` (Local test: ${data.debug})` : ''}`);
+        setStatusMessage(`Your message has been delivered to ${email}. Thank you!`);
         setFormData({ name: '', senderEmail: '', subject: '', message: '' });
         setTrap('');
       } else if (res.ok && data.success) {
