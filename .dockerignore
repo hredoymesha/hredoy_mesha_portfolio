@@ -1,0 +1,15 @@
+node_modules
+dist
+logs
+.git
+.env
+.env.*
+citecraft/.venv
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+docs
+tests
+**/*.egg-info
+deploy

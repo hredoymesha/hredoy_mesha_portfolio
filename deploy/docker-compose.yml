@@ -1,0 +1,35 @@
+# Runs the site behind Caddy, which gets and renews the HTTPS certificate by itself.
+# Use:  cp deploy/env.production.example .env   (edit it)   then   docker compose -f deploy/docker-compose.yml --env-file .env up -d --build
+# Only Caddy is reachable from the internet (ports 80 and 443). The site container has no published port.
+
+services:
+  app:
+    build:
+      context: ..
+    restart: unless-stopped
+    env_file: ../.env
+    volumes:
+      - app_logs:/app/logs      # contact messages (with IP addresses) are kept here between restarts
+    expose:
+      - "7860"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env, for example example.org}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data        # the certificate lives here: do not delete it
+      - caddy_config:/config
+
+volumes:
+  app_logs:
+  caddy_data:
+  caddy_config:

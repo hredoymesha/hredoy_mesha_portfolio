@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%" role="img" aria-labelledby="t d">
+  <title id="t">ERP BD module map</title>
+  <desc id="d">Built and tested: security and roles, catalog and business types, inventory and stock counts, purchasing and vendor ledger. Planned: orders and couriers, point of sale, accounting, production, people and payroll, customers, website builder, automation, API and mobile app, multi-tenant SaaS.</desc>
+  <rect width="800" height="500" fill="#10141c"/>
+  <g transform="translate(0,28)">
+  <text x="40" y="58" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="26" font-weight="700" fill="#f1f5f9">ERP BD</text>
+  <text x="40" y="82" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="13" fill="#9aa4b5">Business platform for Bangladesh · what is built and what is planned</text>
+  <text x="40" y="124" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12" font-weight="700" letter-spacing="1.2" fill="#7dd4b3">BUILT AND TESTED</text>
+  <rect x="40.0" y="136" width="171.0" height="74" rx="10" fill="#1b4439" stroke="#5cb89a" stroke-width="1.5"/>
+  <path d="M54.0 156 l5 5 l9 -10" fill="none" stroke="#7dd4b3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="54.0" y="184" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8f6f1">Security &amp;</text>
+  <text x="54.0" y="201" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8f6f1">roles</text>
+  <rect x="223.0" y="136" width="171.0" height="74" rx="10" fill="#1b4439" stroke="#5cb89a" stroke-width="1.5"/>
+  <path d="M237.0 156 l5 5 l9 -10" fill="none" stroke="#7dd4b3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="237.0" y="184" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8f6f1">Catalog &amp;</text>
+  <text x="237.0" y="201" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8f6f1">business types</text>
+  <rect x="406.0" y="136" width="171.0" height="74" rx="10" fill="#1b4439" stroke="#5cb89a" stroke-width="1.5"/>
+  <path d="M420.0 156 l5 5 l9 -10" fill="none" stroke="#7dd4b3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="420.0" y="184" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8f6f1">Inventory &amp;</text>
+  <text x="420.0" y="201" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8f6f1">stock counts</text>
+  <rect x="589.0" y="136" width="171.0" height="74" rx="10" fill="#1b4439" stroke="#5cb89a" stroke-width="1.5"/>
+  <path d="M603.0 156 l5 5 l9 -10" fill="none" stroke="#7dd4b3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="603.0" y="184" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8f6f1">Purchasing &amp;</text>
+  <text x="603.0" y="201" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8f6f1">vendor ledger</text>
+  <text x="40" y="256" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12" font-weight="700" letter-spacing="1.2" fill="#9aa4b5">PLANNED</text>
+  <rect x="40.0" y="268" width="134.4" height="58" rx="10" fill="none" stroke="#56627a" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="107.2" y="302" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12.5" fill="#b4bdcc">Orders &amp; couriers</text>
+  <rect x="186.4" y="268" width="134.4" height="58" rx="10" fill="none" stroke="#56627a" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="253.6" y="302" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12.5" fill="#b4bdcc">Point of sale</text>
+  <rect x="332.8" y="268" width="134.4" height="58" rx="10" fill="none" stroke="#56627a" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="400.0" y="302" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12.5" fill="#b4bdcc">Accounting</text>
+  <rect x="479.2" y="268" width="134.4" height="58" rx="10" fill="none" stroke="#56627a" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="546.4" y="302" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12.5" fill="#b4bdcc">Production</text>
+  <rect x="625.6" y="268" width="134.4" height="58" rx="10" fill="none" stroke="#56627a" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="692.8" y="302" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12.5" fill="#b4bdcc">People &amp; payroll</text>
+  <rect x="40.0" y="338" width="134.4" height="58" rx="10" fill="none" stroke="#56627a" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="107.2" y="372" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12.5" fill="#b4bdcc">Customers (CRM)</text>
+  <rect x="186.4" y="338" width="134.4" height="58" rx="10" fill="none" stroke="#56627a" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="253.6" y="372" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12.5" fill="#b4bdcc">Website builder</text>
+  <rect x="332.8" y="338" width="134.4" height="58" rx="10" fill="none" stroke="#56627a" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="400.0" y="372" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12.5" fill="#b4bdcc">Automation</text>
+  <rect x="479.2" y="338" width="134.4" height="58" rx="10" fill="none" stroke="#56627a" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="546.4" y="372" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12.5" fill="#b4bdcc">API &amp; mobile app</text>
+  <rect x="625.6" y="338" width="134.4" height="58" rx="10" fill="none" stroke="#56627a" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="692.8" y="372" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12.5" fill="#b4bdcc">Multi-tenant SaaS</text>
+  </g>
+</svg>

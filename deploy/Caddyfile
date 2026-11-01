@@ -1,0 +1,9 @@
+# {$DOMAIN} comes from .env. The www address is sent to the bare domain.
+{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy app:7860
+}
+
+www.{$DOMAIN} {
+	redir https://{$DOMAIN}{uri} permanent
+}
