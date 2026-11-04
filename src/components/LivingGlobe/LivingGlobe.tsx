@@ -477,12 +477,14 @@ export function LivingGlobe() {
           </div>
         )}
       </div>
-      {/* <p className="text-xs text-[var(--faint)]">
+      {/*
+      <p className="text-xs text-[var(--faint)]">
         Drag to turn the globe. Click it, then use the mouse wheel to zoom; or use the + and − buttons or the keyboard (arrow keys, + and −). On a phone, drag sideways and pinch. White outlines mark Bangladesh and Finland. Day and night follow the real time.
       </p>
-      {texturesPresent && (
-        <p className="text-xs text-[var(--faint)]">Textures: Solar System Scope (CC BY 4.0), based on NASA Blue Marble.</p>-->*/}
+    {texturesPresent && (
+        <p className="text-xs text-[var(--faint)]">Textures: Solar System Scope (CC BY 4.0), based on NASA Blue Marble.</p>
       )}
+      */}
     </div>
   );
 }
