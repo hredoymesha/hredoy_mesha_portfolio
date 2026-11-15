@@ -6,7 +6,6 @@ import {
   X,
   ArrowRight,
   ArrowUp,
-  ArrowUpRight,
   Download,
   Copy,
   Check,
