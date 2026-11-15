@@ -41,6 +41,7 @@ export function LivingGlobe() {
   const wheelActiveRef = useRef(false); // mouse-wheel zoom is switched on by clicking the globe
   const hintTimerRef = useRef<number>(0);
   const [wheelHint, setWheelHint] = useState(false);
+  const [touchOn, setTouchOn] = useState(false); // phone: after a tap on the globe, a drag turns it in every direction
   const [ready, setReady] = useState(false); // true once the 3D globe exists, so the mouse and touch handlers can attach
   const [currentTime, setCurrentTime] = useState(new Date());
   const [webGLAvailable, setWebGLAvailable] = useState(() => isWebGLAvailable());
@@ -198,8 +199,24 @@ export function LivingGlobe() {
 
     // Touch support
     let lastTouchDist = 0;
+    // Phones: a drag that starts sideways always turns the globe. After one tap on the globe it also tilts up and down
+    // (the page stops scrolling over it); a tap anywhere else gives scrolling back.
+    let touchActive = false;
+    const tap = { t: 0, x: 0, y: 0, moved: false };
+    const setTouchActive = (on: boolean) => {
+      touchActive = on;
+      canvas.style.touchAction = on ? 'none' : 'pan-y';
+      setTouchOn(on);
+    };
+    const handleOutsideTouch = (e: TouchEvent) => {
+      if (touchActive && e.target !== canvas) setTouchActive(false);
+    };
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 1) {
+        tap.t = Date.now();
+        tap.x = e.touches[0].clientX;
+        tap.y = e.touches[0].clientY;
+        tap.moved = false;
         isDraggingRef.current = true;
         globeRef.current?.setAutoRotate(false);
         if (autoRotateTimeoutRef.current) {
@@ -218,8 +235,12 @@ export function LivingGlobe() {
       if (e.touches.length === 1 && isDraggingRef.current) {
         const dx = e.touches[0].clientX - lastMouseRef.current.x;
         const dy = e.touches[0].clientY - lastMouseRef.current.y;
-        // A sideways drag turns the globe; an up or down drag is left alone so the page can scroll.
-        if (Math.abs(dx) > Math.abs(dy)) {
+        if (Math.hypot(e.touches[0].clientX - tap.x, e.touches[0].clientY - tap.y) > 10) tap.moved = true;
+        if (touchActive) {
+          if (e.cancelable) e.preventDefault();
+          globeRef.current?.rotate(dx, dy);
+        } else if (Math.abs(dx) > Math.abs(dy)) {
+          // A sideways drag turns the globe; an up or down drag is left alone so the page can scroll.
           if (e.cancelable) e.preventDefault();
           globeRef.current?.rotate(dx, 0);
         }
@@ -241,6 +262,7 @@ export function LivingGlobe() {
 
     const handleTouchEnd = () => {
       isDraggingRef.current = false;
+      if (!touchActive && !tap.moved && Date.now() - tap.t < 300) setTouchActive(true);
     };
 
     const switchWheelOff = () => {
@@ -287,8 +309,10 @@ export function LivingGlobe() {
     canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
     canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
     canvas.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener('touchstart', handleOutsideTouch, { passive: true });
 
     return () => {
+      document.removeEventListener('touchstart', handleOutsideTouch);
       canvas.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
@@ -362,6 +386,10 @@ export function LivingGlobe() {
           </button>
         ))}
       </div>
+      <p className="globe-hint">
+        <span className="hint-mouse">Click on the globe first to use it.</span>
+        <span className="hint-touch">{touchOn ? 'Drag in any direction. Tap outside the globe to scroll the page again.' : 'Tap the globe, then drag in any direction to turn it. Pinch to zoom.'}</span>
+      </p>
 
       {/* Globe Container */}
       <div
@@ -392,6 +420,22 @@ export function LivingGlobe() {
             className="globe-ctl w-8 h-8 rounded-lg bg-[var(--panel)] border border-[var(--line)] text-base font-bold text-[var(--muted)] hover:text-[var(--ink)] transition-colors cursor-pointer"
           >
             −
+          </button>
+          <button
+            type="button"
+            onClick={() => globeRef.current?.rotate(0, -40)}
+            aria-label="Tilt the globe up"
+            className="globe-ctl globe-tilt w-8 h-8 rounded-lg bg-[var(--panel)] border border-[var(--line)] text-base font-bold text-[var(--muted)] hover:text-[var(--ink)] transition-colors cursor-pointer"
+          >
+            ↑
+          </button>
+          <button
+            type="button"
+            onClick={() => globeRef.current?.rotate(0, 40)}
+            aria-label="Tilt the globe down"
+            className="globe-ctl globe-tilt w-8 h-8 rounded-lg bg-[var(--panel)] border border-[var(--line)] text-base font-bold text-[var(--muted)] hover:text-[var(--ink)] transition-colors cursor-pointer"
+          >
+            ↓
           </button>
           <button
             type="button"
@@ -440,7 +484,7 @@ export function LivingGlobe() {
                     />
                     <span className="text-sm font-bold text-[var(--ink)]">{city.name}</span>
                   </div>
-                  <p className="text-xs text-[var(--faint)] font-mono">
+                  <p className="text-xs text-[var(--faint)]">
                     {city.lat.toFixed(2)}°N, {city.lon.toFixed(2)}°E
                   </p>
                   <p className="text-xs text-[var(--muted)] mt-1">{city.label}</p>

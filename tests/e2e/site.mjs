@@ -43,7 +43,12 @@ try {
       const tex = await page.evaluate(async () => (await Promise.all(["daymap", "nightmap", "clouds"].map((n) => fetch(`/textures/earth-${n}-2k.jpg`).then((r) => r.headers.get("content-type"))))).join());
       R.ok(/image\/jpeg.*image\/jpeg.*image\/jpeg/.test(tex), `[${theme}] the three Earth images are served as pictures (${tex})`);
       await page.locator("#globe").scrollIntoViewIfNeeded(); await page.waitForTimeout(2500);
-      R.ok(await page.getByText(/Textures: Solar System Scope/).isVisible(), `[${theme}] the Earth-image credit line is shown`);
+      // The owner has chosen to keep the credit line (and the globe help text) switched off in a code comment in LivingGlobe.tsx.
+      // The check below still runs whenever the credit is in the page; if it is commented out on purpose, it is reported instead of failed.
+      const globeSrc = fs.readFileSync(path.join(root, "src/components/LivingGlobe/LivingGlobe.tsx"), "utf8");
+      const creditSwitchedOff = /\{\/\*[\s\S]*?Textures: Solar System Scope[\s\S]*?\*\/\}/.test(globeSrc);
+      if (creditSwitchedOff) R.info(`[${theme}] the Earth-image credit line is switched off by the owner (commented out in LivingGlobe.tsx), so it is not checked`);
+      else R.ok(await page.getByText(/Textures: Solar System Scope/).isVisible(), `[${theme}] the Earth-image credit line is shown`);
       if (theme === "light") {
         const cv = page.locator("#globe canvas"); const box = await cv.boundingBox();
         const before = await cv.screenshot();
@@ -242,6 +247,90 @@ try {
     const ax = await page.evaluate(async () => (await axe.run(document.querySelector("#globe"), { runOnly: ["wcag2a", "wcag2aa", "wcag21aa"] })).violations.map((v) => v.id + ":" + v.nodes.map((n) => (n.html || "").slice(0, 60)).join("|")));
     R.ok(ax.length === 0, `axe ${theme}: the globe's Day & Night view has no violations (${ax.join(", ") || "none"})`);
     await ctx.close();
+  }
+
+  // ---------- case-study pages, 404 screen, hero button, CV request form, phone details and menu ----------
+  {
+    const caseSrc = fs.readFileSync(path.join(root, "src/data/caseStudies.ts"), "utf8");
+    const slugs = [...caseSrc.matchAll(/^\s+slug: '([a-z0-9-]+)'/gm)].map((m) => m[1]);
+    R.ok(slugs.length === siteData.work.length && siteData.work.every((w) => slugs.includes(w.caseStudy)), `every Selected Work item has a case-study page (${slugs.join(", ")})`);
+    for (const theme of ["light", "dark"]) {
+      for (const slug of slugs) {
+        const ctx = await b.newContext({ viewport: { width: 360, height: 740 }, colorScheme: theme });
+        await ctx.addInitScript((t) => { try { localStorage.setItem("theme", t); } catch { /* ignore */ } }, theme);
+        const page = await ctx.newPage(); const problems = [];
+        page.on("console", (m) => { if (["error", "warning"].includes(m.type())) problems.push(m.text().slice(0, 160)); });
+        page.on("pageerror", (e) => problems.push(String(e).slice(0, 160)));
+        await page.addInitScript(() => { window.__csp = []; document.addEventListener("securitypolicyviolation", (e) => window.__csp.push(e.violatedDirective)); });
+        const res = await page.goto(`${base}/work/${slug}`); await page.waitForSelector("h1"); await page.waitForTimeout(500);
+        const r = await page.evaluate(() => ({ h1: document.querySelector("h1")?.textContent || "", title: document.title, sections: document.querySelectorAll(".cs-section").length, overflow: document.documentElement.scrollWidth - innerWidth, back: document.querySelector(".cs-back")?.getAttribute("href"), img: (() => { const i = document.querySelector(".cs-figure img"); return !!i && i.complete && i.naturalWidth > 0; })(), canonical: document.querySelector("link[rel=canonical]")?.getAttribute("href"), csp: window.__csp.length, theme: document.documentElement.getAttribute("data-theme") }));
+        R.ok(res.status() === 200 && r.h1.length > 3 && /Case study/.test(r.title) && r.sections >= 3 && r.img && r.back === "/#work" && r.canonical === `https://hredoymesha.com/work/${slug}`, `[${theme}] /work/${slug} loads with its heading, sections, picture, back link and canonical address`);
+        R.ok(r.overflow <= 0 && r.csp === 0 && problems.length === 0 && r.theme === theme, `[${theme}] /work/${slug} has no sideways overflow at 360px, no console errors or CSP violations ${problems[0] || ""}`);
+        await ctx.close();
+      }
+    }
+    {
+      const ctx = await b.newContext({ viewport: { width: 360, height: 740 } }); const page = await ctx.newPage(); const problems = [];
+      // Chromium logs the 404 status of the page itself as a console error; that message is expected and is not counted.
+      page.on("console", (m) => { if (["error", "warning"].includes(m.type()) && !/status of 404/.test(m.text())) problems.push(m.text().slice(0, 160)); });
+      const res = await page.goto(`${base}/work/not-a-page`); await page.waitForSelector("h1");
+      R.ok(res.status() === 404 && /does not exist/.test(await page.textContent("h1")) && (await page.getAttribute("a.not-found-link", "href")) === "/", "an unknown address answers 404 and shows the page-not-found screen with a link home");
+      R.ok(problems.length === 0, `the page-not-found screen has no console errors ${problems[0] || ""}`);
+      const home = await page.goto(`${base}/`); R.ok(home.status() === 200, "the home page answers 200");
+      await ctx.close();
+    }
+    for (const [pth, label] of [["/sitemap.xml", "sitemap"], ["/robots.txt", "robots"], ["/favicon.ico", "favicon.ico"], ["/apple-touch-icon.png", "apple-touch-icon"], ["/assets/favicon.svg", "favicon.svg"]]) {
+      const r = await fetch(base + pth); R.ok(r.status === 200, `${label} is served (${r.status})`);
+    }
+    {
+      const { ctx, page, problems, requests } = await open(b, base);
+      const links = await page.evaluate(() => [...document.querySelectorAll("#work article a[href^='/work/']")].map((a) => a.getAttribute("href")));
+      R.ok(links.length === siteData.work.length && links.every((h) => slugs.includes(h.replace("/work/", ""))), `Selected Work shows ${links.length} "Read the case study" buttons that point at real pages`);
+      // hero button: opens the anonymous note
+      await page.getByRole("button", { name: /Prefer to stay anonymous/ }).click();
+      const inView = await page.waitForFunction(() => { const r = document.getElementById("contact").getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; }, null, { timeout: 8000 }).then(() => true, () => false);
+      R.ok(inView, "the hero's anonymous-note button scrolls to the contact form");
+      // working-hours widget
+      const pills = await page.evaluate(() => [...document.querySelectorAll(".work-status")].map((e) => e.textContent.trim()));
+      R.ok(pills.length === 2 && pills.every((t) => /^(Working|Off) hours$/.test(t)), `the clocks show working-hours notes (${pills.join(", ")})`);
+      await page.locator("#top").scrollIntoViewIfNeeded(); await page.evaluate(() => window.scrollTo(0, 0));
+      // CV request form: required fields stop an empty form; a filled form posts to the contact API
+      await page.locator(".cv-request summary").click();
+      const before = requests.filter((u) => u.endsWith("/api/contact")).length;
+      await page.getByRole("button", { name: "Send request" }).click(); await page.waitForTimeout(400);
+      R.ok(requests.filter((u) => u.endsWith("/api/contact")).length === before, "the CV request form does not send an empty request");
+      await page.getByLabel("Your name").fill("Test Reader"); await page.getByLabel("Your e-mail").fill("reader@example.com"); await page.getByLabel("Reason for the request").fill("Checking the form in a test.");
+      const post = page.waitForRequest((r) => r.url().endsWith("/api/contact") && r.method() === "POST");
+      await page.getByRole("button", { name: "Send request" }).click();
+      const body = JSON.parse((await post).postData() || "{}");
+      await page.waitForSelector(".cv-request-note", { timeout: 8000 });
+      R.ok(/^CV request: /.test(body.subject) && /Checking the form/.test(body.message) && body.isAnonymous === false && body.hp === "", "a filled CV request form posts a normal contact message (subject starts with \"CV request:\")");
+      R.ok(!!(await page.textContent(".cv-request-note")).trim(), "the CV request form shows the result to the visitor");
+      R.ok(problems.length === 0, `no console errors during these checks ${problems[0] || ""}`);
+      await ctx.close();
+    }
+    {
+      // phone: experience details are closed until tapped; wide screens always show them
+      const { ctx, page } = await open(b, base, { width: 390, height: 844, noWebGL: true });
+      const st = await page.evaluate(() => ({ toggles: document.querySelectorAll(".xp-toggle").length, shown: [...document.querySelectorAll(".xp-collapsible-body")].filter((e) => getComputedStyle(e).display !== "none").length }));
+      R.ok(st.toggles === siteData.experience.length + siteData.personalExperience.length && st.shown === 0, `phone: all ${st.toggles} experience detail lists start closed`);
+      await page.locator(".xp-toggle").first().scrollIntoViewIfNeeded(); await page.locator(".xp-toggle").first().click();
+      const open1 = await page.evaluate(() => ({ expanded: document.querySelector(".xp-toggle").getAttribute("aria-expanded"), shown: getComputedStyle(document.querySelector(".xp-collapsible-body")).display }));
+      R.ok(open1.expanded === "true" && open1.shown !== "none", "phone: tapping 'Show details' opens the job details (aria-expanded true)");
+      await ctx.close();
+      const wide = await open(b, base, { width: 1280, height: 800, noWebGL: true });
+      const w2 = await wide.page.evaluate(() => ({ toggles: [...document.querySelectorAll(".xp-toggle")].filter((e) => getComputedStyle(e).display !== "none").length, hidden: [...document.querySelectorAll(".xp-collapsible-body")].filter((e) => getComputedStyle(e).display === "none").length }));
+      R.ok(w2.toggles === 0 && w2.hidden === 0, "wide screen: job details are always visible and no toggle is shown");
+      await wide.ctx.close();
+      // phone menu leaves room to see the page
+      for (const [w, h] of [[320, 568], [375, 667], [568, 320]]) {
+        const m = await open(b, base, { width: w, height: h, noWebGL: true });
+        await m.page.getByRole("button", { name: /navigation menu/i }).click(); await m.page.waitForTimeout(300);
+        const hh = await m.page.evaluate(() => document.querySelector("header").getBoundingClientRect().height);
+        R.ok(hh <= h * 0.62, `phone menu at ${w}x${h} leaves the page visible (menu header ${Math.round(hh)}px of ${h}px)`);
+        await m.ctx.close();
+      }
+    }
   }
 
   // ---------- CiteCraft through the Node proxy ----------

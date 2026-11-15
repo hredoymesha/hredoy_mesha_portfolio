@@ -89,7 +89,7 @@ export function ContactSection({ email, activeTab, onTabChange }: ContactSection
       {/* Header Tabs */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 mb-5 border-b border-[var(--line)]">
         <div>
-          <h3 className="text-xl font-bold font-serif text-[var(--ink)]">Send a Message</h3>
+          <h3 className="text-xl font-bold text-[var(--ink)]">Send a Message</h3>
         </div>
 
         {/* Tab Switcher - "Protocol" removed per Point 9 */}

@@ -20,12 +20,13 @@
   --line-strong: #cac8bc;
   --accent: #3f6f62;
   --accent-ink: #345c51;
+  --accent-alt: #2f5f7a;
   --accent-soft: #e8f0ee;
   --on-accent: #ffffff;
   --maxw: 1200px;
-  --display: Cambria, "Palatino Linotype", "Book Antiqua", Georgia, serif;
-  --body: Cambria, "Palatino Linotype", "Book Antiqua", Georgia, serif;
-  --ui: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif;
+  --display: Cambria, "Palatino Linotype", "Book Antiqua", Georgia, "Noto Sans Bengali", serif;
+  --body: Cambria, "Palatino Linotype", "Book Antiqua", Georgia, "Noto Sans Bengali", serif;
+  --ui: var(--body); /* one font across the site: the UI font is the body font */
   --font-bengali-noto: "Noto Sans Bengali", system-ui, sans-serif;
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -42,6 +43,7 @@
   --line-strong: #363e4e;
   --accent: #5cb89a;
   --accent-ink: #7dd4b3;
+  --accent-alt: #86b6d6;
   --accent-soft: rgba(92, 184, 154, 0.12);
   --on-accent: #0f141c;
 }
@@ -612,7 +614,7 @@ main section[id] {
 .lang-btn:hover { background: var(--accent-soft); }
 .lang-btn[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
 .lang-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-[lang="bn"] { font-family: "Noto Sans Bengali", var(--ui); }
+[lang="bn"] { font-family: "Noto Sans Bengali", var(--body); } /* Bengali letters use Noto Sans Bengali; English words inside keep the site font */
 h1[lang="bn"] { font-size: clamp(1.875rem, 5.2vw, 3.5rem); line-height: 1.35; letter-spacing: 0; font-weight: 700; overflow-wrap: break-word; }
 p[lang="bn"] { line-height: 1.9; letter-spacing: 0; }
 
@@ -645,7 +647,7 @@ h1, h2, h3, h4, li, p, summary, label, small { overflow-wrap: anywhere; }
 
 /* Career timeline (Experience section) */
 .career-timeline { position: relative; padding: 22px 22px 24px; border: 1px solid var(--line); border-radius: 22px; background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%); box-shadow: 0 1px 0 rgb(255 255 255 / 6%) inset, 0 18px 40px -22px rgb(15 23 42 / 28%); overflow: hidden; }
-@media (min-width: 1024px) and (min-height: 860px) { .career-timeline { position: sticky; top: 6rem; } } /* only when the whole box fits on screen */
+@media (min-width: 1280px) and (min-height: 860px) { .career-timeline { position: sticky; top: 6rem; } } /* only when the whole box fits on screen */
 .career-timeline::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--accent), transparent 85%); }
 .timeline-head { margin-bottom: 14px; }
 .timeline-title { margin: 0; font-size: 1.15rem; letter-spacing: 0.01em; color: var(--ink); }
@@ -681,3 +683,223 @@ h1, h2, h3, h4, li, p, summary, label, small { overflow-wrap: anywhere; }
 :root[data-theme="dark"] .st-night { color: #a5b4fc; }
 
 #globe canvas:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+
+/* Pillars band: each point in its own box. The title scales with the box width so it stays on one line. */
+.pillar-card {
+  container-type: inline-size;
+  padding: 16px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--bg);
+  box-shadow: 0 1px 2px rgba(20, 30, 40, 0.05), 0 4px 14px rgba(20, 30, 40, 0.05);
+}
+.pillar-title {
+  font-size: clamp(0.8rem, 5.2cqw, 1.06rem);
+  line-height: 1.3;
+}
+:root[data-theme="dark"] .pillar-card { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 14px rgba(0, 0, 0, 0.25); }
+
+/* Publication cards: the title and summary sit in a soft box; "Open Publication" is a quiet neutral button. */
+.pub-box {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel-2);
+}
+.pub-open-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--panel-2);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.pub-open-btn:hover {
+  background: var(--panel);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(20, 30, 40, 0.08);
+}
+.pub-open-btn:active { transform: translateY(0); box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { .pub-open-btn, .pub-open-btn:hover { transition: none; transform: none; } }
+
+/* Experience: the title (role and organisation) stays on one line and scales with the column; descriptions stay clearly smaller. */
+.xp-main { container-type: inline-size; overflow-wrap: anywhere; }
+.xp-title { font-size: clamp(1.05rem, 5.4cqw, 1.3rem); line-height: 1.3; }
+.xp-impact { font-size: 0.9rem; line-height: 1.5; }
+@media (min-width: 768px) {
+  .xp-title { font-size: clamp(0.85rem, 2.85cqw, 1.5rem); }
+}
+
+/* Capabilities: the text size follows the column width so every item fits on one line. With larger browser text it wraps instead of overflowing. */
+.skill-col { container-type: inline-size; }
+.skill-list { font-size: clamp(0.76rem, 6.4cqw, 0.9rem); }
+
+/* Education: each card title stays on one line (from small tablets up) and scales with the card. */
+.edu-card { container-type: inline-size; }
+.edu-title { font-size: clamp(1.1rem, 5.6cqw, 1.3rem); line-height: 1.3; }
+@media (min-width: 640px) {
+  .edu-title { font-size: clamp(0.85rem, 4.3cqw, 1.5rem); }
+}
+
+/* LinkedIn "in" icon and the Active badge: colours chosen for readable contrast in both themes. */
+.li-icon { background: #e4eefa; color: #0a569e; }
+.status-active { background: #e3f4ec; color: #0a5e41; }
+.status-dot { background: #0f8a5f; }
+:root[data-theme="dark"] .li-icon { background: rgba(112, 181, 249, 0.16); color: #9fd0fc; }
+:root[data-theme="dark"] .status-active { background: rgba(110, 231, 183, 0.14); color: #86efc0; }
+:root[data-theme="dark"] .status-dot { background: #6ee7b7; }
+@media (prefers-reduced-motion: reduce) { .status-dot { animation: none; } }
+
+/* Hero role line, shown above the main headline. */
+.hero-role {
+  margin: 0 0 10px;
+  font-family: var(--ui);
+  font-size: clamp(1rem, 1.4vw + 0.5rem, 1.3rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--accent-alt);
+}
+
+/* Working abstract (in-progress research) */
+.pub-abstract { margin-top: 12px; font-family: var(--ui); }
+.pub-abstract summary { cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--accent); }
+.pub-abstract summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.pub-abstract p { margin-top: 10px; font-family: var(--body); font-size: 0.95rem; line-height: 1.65; color: var(--muted); }
+.pub-abstract .pub-abstract-note { font-family: var(--ui); font-size: 0.78rem; color: var(--faint); }
+
+/* Personal experience tag */
+.personal-tag { display: inline-block; padding: 3px 10px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--panel-2); color: var(--muted); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; }
+
+/* "Page not found" screen */
+.not-found { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 32px 20px; text-align: center; }
+.not-found-code { font-family: var(--display); font-size: clamp(3.5rem, 12vw, 6rem); font-weight: 700; line-height: 1; color: var(--accent); text-align: center; }
+.not-found h1 { font-size: clamp(1.4rem, 4vw, 2rem); }
+.not-found-text { max-width: 32rem; color: var(--muted); text-align: center; text-align-last: center; }
+.not-found-link { margin-top: 8px; padding: 10px 20px; border-radius: 12px; background: var(--accent); color: var(--on-accent); font-family: var(--ui); font-size: 0.9rem; font-weight: 600; text-decoration: none; }
+.not-found-link:hover { background: var(--accent-ink); }
+.not-found-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* Soft hover on cards: only on devices that hover, and not for people who asked for less motion. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .pillar-card, .edu-card, #research article, #work article {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .pillar-card:hover, .edu-card:hover, #research article:hover, #work article:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(20, 30, 40, 0.08);
+  }
+}
+
+/* Personal experience tag stays on one line */
+.personal-tag { white-space: nowrap; letter-spacing: 0.02em; font-size: 0.7rem; padding: 3px 9px; }
+
+/* Small link under the hero buttons */
+.hero-anon-link { align-self: flex-start; display: inline-flex; align-items: center; margin-top: 12px; padding: 10px 18px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--panel-2); color: var(--ink); font-family: var(--ui); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; }
+.hero-anon-link:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); box-shadow: 0 3px 10px rgba(20, 30, 40, 0.08); }
+.hero-anon-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .hero-anon-link, .hero-anon-link:hover { transition: none; transform: none; } }
+
+/* Hint under the globe tabs */
+.globe-hint { margin: -4px 0 0; font-size: 0.8rem; color: var(--faint); text-align: left; }
+
+/* Phones: slightly smaller intro and About text */
+@media (max-width: 639px) {
+  .hero-role { font-size: 1rem; }
+}
+
+/* Phone menu: compact, and it scrolls inside itself so the page is always partly visible, even on small or landscape screens. */
+.mobile-menu { max-height: min(50dvh, calc(100dvh - 72px)); overflow-y: auto; overscroll-behavior: contain; }
+
+/* Experience details: closed behind a tap on phones, always open from tablet width up and in print. */
+.xp-toggle { display: none; }
+@media (max-width: 767px) {
+  .xp-toggle { display: inline-flex; align-items: center; align-self: flex-start; margin-top: 10px; padding: 6px 14px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--panel-2); color: var(--accent); font-family: var(--ui); font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+  .xp-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .xp-collapsible-body { display: none; }
+  .xp-collapsible.is-open .xp-collapsible-body { display: block; }
+}
+@media print { .xp-toggle { display: none !important; } .xp-collapsible-body { display: block !important; } }
+
+/* Working-hours note under each clock, and the time gap line */
+.work-status { display: inline-flex; align-items: center; justify-content: center; gap: 6px; margin: 8px auto 0; padding: 3px 11px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--panel-2); font-family: var(--ui); font-size: 0.78rem; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--muted); white-space: nowrap; }
+.work-status.is-working { border-color: #0f8a5f; background: #e3f4ec; color: #0a5e41; }
+:root[data-theme="dark"] .work-status.is-working { border-color: #6ee7b7; background: rgba(110, 231, 183, 0.14); color: #86efc0; }
+.work-dot { width: 7px; height: 7px; border-radius: 50%; background: transparent; border: 1.5px solid var(--faint); }
+.work-status.is-working .work-dot { background: #0f8a5f; border-color: #0f8a5f; }
+:root[data-theme="dark"] .work-status.is-working .work-dot { background: #6ee7b7; border-color: #6ee7b7; }
+.time-gap { margin: 12px 0 0; padding-bottom: 12px; border-bottom: 1px solid var(--line); text-align: center; text-align-last: center; font-family: var(--ui); font-size: 0.75rem; color: var(--muted); }
+.hero-clock-wrap { display: block; }
+
+/* CV request form inside the hero card */
+.cv-request { width: 100%; margin-top: 4px; font-family: var(--ui); }
+.cv-request summary { cursor: pointer; text-align: center; font-size: 0.8rem; font-weight: 600; color: var(--accent); }
+.cv-request summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.cv-request-form { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; text-align: left; }
+.cv-request-form label { display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; color: var(--muted); }
+.cv-request-form input, .cv-request-form select, .cv-request-form textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--bg); color: var(--ink); font-family: var(--ui); font-size: 0.9rem; }
+.cv-request-form input:focus-visible, .cv-request-form select:focus-visible, .cv-request-form textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.cv-request-form button { align-self: flex-start; padding: 8px 18px; border: 0; border-radius: 10px; background: var(--accent); color: var(--on-accent); font-family: var(--ui); font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+.cv-request-form button:disabled { opacity: 0.6; cursor: progress; }
+.cv-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.cv-request-note { margin: 0; font-size: 0.8rem; text-align: left; text-align-last: left; }
+.cv-request-note.is-success { color: #0a5e41; }
+.cv-request-note.is-error, .cv-request-note.is-warning { color: #9a2b1f; }
+:root[data-theme="dark"] .cv-request-note.is-success { color: #86efc0; }
+:root[data-theme="dark"] .cv-request-note.is-error, :root[data-theme="dark"] .cv-request-note.is-warning { color: #fca5a5; }
+.hint-touch { display: none; }
+@media (hover: none) { .hint-mouse { display: none; } .hint-touch { display: inline; } }
+.pub-abstract .pub-abstract-text { white-space: pre-line; }
+
+/* Availability message: its own block, apart from the clocks */
+.availability-block { margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: var(--panel-2); }
+.availability-block p { margin: 0; }
+.work-status-wrap { display: flex; justify-content: center; }
+
+/* Up and down tilt buttons for the globe: shown on touch screens only (a mouse can drag in any direction). */
+.globe-tilt { display: none; }
+@media (hover: none) { .globe-tilt { display: inline-block; } }
+
+/* Case-study pages (/work/<slug>) */
+.cs-page { min-height: 100vh; display: flex; flex-direction: column; background: var(--bg); color: var(--ink); }
+.cs-header { border-bottom: 1px solid var(--line); background: var(--bg); }
+.cs-header-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 14px; padding-bottom: 14px; }
+.cs-brand { font-family: var(--display); font-size: 1.15rem; font-weight: 700; color: var(--ink); text-decoration: none; }
+.cs-brand span { color: var(--accent); }
+.cs-back { font-family: var(--ui); font-size: 0.9rem; font-weight: 600; color: var(--accent); text-decoration: none; }
+.cs-back:hover, .cs-footer a:hover { text-decoration: underline; }
+.cs-main { flex: 1; width: 100%; padding-top: 40px; padding-bottom: 56px; }
+.cs-article { max-width: 46rem; margin: 0 auto; }
+.cs-tag { margin: 0 0 8px; font-family: var(--ui); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); text-align: left; }
+.cs-title { margin: 0; font-size: clamp(1.7rem, 5vw, 2.6rem); line-height: 1.15; overflow-wrap: anywhere; }
+.cs-summary { margin: 16px 0 0; font-size: clamp(1rem, 2.2vw, 1.2rem); line-height: 1.7; color: var(--muted); text-align: left; }
+.cs-figure { margin: 28px 0 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--panel-2); }
+.cs-figure img { display: block; width: 100%; height: auto; }
+.cs-section { margin-top: 32px; }
+.cs-section h2 { margin: 0 0 10px; font-size: clamp(1.2rem, 3vw, 1.5rem); }
+.cs-section p { margin: 0 0 12px; line-height: 1.75; color: var(--ink); text-align: left; text-align-last: left; }
+.cs-section ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.cs-section li { position: relative; padding-left: 20px; line-height: 1.7; color: var(--ink); overflow-wrap: anywhere; }
+.cs-section li::before { content: ""; position: absolute; left: 2px; top: 0.7em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.75; }
+.cs-note { margin: 28px 0 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel-2); font-size: 0.9rem; line-height: 1.6; color: var(--muted); text-align: left; text-align-last: left; }
+.cs-links { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; }
+.cs-pager { max-width: 46rem; margin: 48px auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cs-pager a { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); color: var(--ink); font-family: var(--ui); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
+.cs-pager a:last-child { text-align: right; }
+.cs-pager a span { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--faint); }
+.cs-pager a:hover { border-color: var(--accent); }
+.cs-footer { border-top: 1px solid var(--line); padding: 20px 0; font-family: var(--ui); font-size: 0.9rem; }
+.cs-footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+@media (max-width: 520px) { .cs-pager { grid-template-columns: 1fr; } .cs-pager a:last-child { text-align: left; } .cs-main { padding-top: 28px; } }
+
+/* Short screens (a phone held sideways): tighter menu rows so more of the page stays visible */
+@media (max-height: 420px) {
+  .mobile-menu { padding-top: 6px; padding-bottom: 6px; }
+  .mobile-menu a, .mobile-menu button { padding-top: 4px; padding-bottom: 4px; font-size: 0.95rem; }
+}

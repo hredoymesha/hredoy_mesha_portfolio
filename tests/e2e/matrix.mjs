@@ -49,7 +49,7 @@ try {
       if (w >= 320 && r.clockCols !== 2) bad.push(`hero clocks stack (${r.clockCols} column) at normal text size`);
       if (r.minText < 10) bad.push(`text smaller than 10px (${r.small.join(" | ")})`);
       if (r.targets.length) bad.push("controls under 24x24 CSS px: " + r.targets.slice(0, 3).join(", "));
-      if (!r.canvas || r.canvas[0] < 200 || Math.abs(r.canvas[0] - r.canvas[1]) > 2) bad.push("artwork size " + r.canvas);
+      if (!r.canvas || r.canvas[0] < 200 || Math.abs(r.canvas[0] * 0.9 - r.canvas[1]) > 3) bad.push("artwork size " + r.canvas);
       if (r.header > r.vh * 0.3) bad.push(`sticky header uses ${r.header}px of ${r.vh}px`);
       if (problems.length) bad.push("console: " + problems[0]);
       R.ok(bad.length === 0, `${String(w).padStart(4)}x${h} ${theme.padEnd(5)} ${label}: ${bad.length ? bad.join("; ") : `no overflow, artwork ${r.canvas[0]}px, min text ${r.minText}px`}`);

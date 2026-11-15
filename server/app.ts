@@ -1,6 +1,9 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import fs from 'fs';
 import path from 'path';
+
+/** Addresses of the case-study pages (one per Selected Work item). Keep in step with src/data/caseStudies.ts; tests/server.test.ts checks that. */
+export const CASE_STUDY_PATHS = ['/work/devforge', '/work/retail-operations-dashboard', '/work/fundraising-kpi-analysis', '/work/erp-bd'];
 import nodemailer from 'nodemailer';
 
 /** Anything with a sendMail method (nodemailer transporter or a test double). */
@@ -409,6 +412,9 @@ export function createApp(opts: AppOptions) {
     app.get('*', (req, res) => {
       if (path.extname(req.path)) return res.status(404).type('text/plain').send('Not found');
       res.setHeader('Cache-Control', 'no-cache');
+      // The home page and the case-study pages are the only pages; any other address gets the site's "page not found" screen with a real 404 status.
+      const page = req.path.replace(/\/+$/, '') || '/';
+      if (page !== '/' && page !== '/index.html' && !CASE_STUDY_PATHS.includes(page)) res.status(404);
       res.sendFile(path.resolve(dist, 'index.html'));
     });
   }

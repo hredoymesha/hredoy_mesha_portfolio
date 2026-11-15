@@ -12,6 +12,9 @@ Live at https://hredoymesha.com
 - CiteCraft, a citation and bibliography tool that runs against a small Python service.
 - A contact form. Every message is saved with the visitor's IP address, and it is e-mailed to me when mail is set up.
 - CV buttons that open private Google Drive files. People without access ask for it through Google. No CV is stored in this repository.
+- A "Request a CV by form" box next to the CV buttons. It sends a normal message through the contact form, so it is saved and e-mailed like any other message.
+- A case-study page for each Selected Work item, at `/work/<name>`. The text is in `src/data/caseStudies.ts`. If you add or rename a page, update the list of addresses in `server/app.ts` too (a test checks that the two match).
+- A "page not found" screen. Any address other than the home page and the case-study pages answers with status 404.
 
 ## Run it on your computer
 

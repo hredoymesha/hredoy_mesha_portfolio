@@ -1,6 +1,6 @@
 # Responsive test matrix
 
-Written by `npm run matrix:write` on 2026-11-01. **Simulated viewports in headless Chromium on Linux: not real devices, not Safari/Firefox, no touch hardware, no screen reader.**
+Written by `npm run matrix:write` on 2026-11-15. **Simulated viewports in headless Chromium on Linux: not real devices, not Safari/Firefox, no touch hardware, no screen reader.**
 
 Checks per profile: no horizontal scroll, nothing past the right edge, headings not clipped, no visible text under 10px, buttons/inputs at least 24x24 CSS px (WCAG 2.2 target size), artwork square and >= 200px, sticky header <= 30% of the viewport height, no console errors.
 
