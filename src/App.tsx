@@ -6,7 +6,6 @@ import {
   X,
   ArrowRight,
   ArrowUp,
-  ArrowUpRight,
   Download,
   Copy,
   Check,
@@ -22,6 +21,8 @@ import { HelsinkiDhakaNetworkCanvas } from './components/HelsinkiDhakaNetwork';
 import { ContactSection } from './components/ContactSection';
 import { CareerTimeline } from './components/CareerTimeline';
 import { CiteCraftPanel } from './components/CiteCraftPanel';
+import { WorkStatus, hoursAhead } from './components/WorkStatus';
+import { CvRequestForm } from './components/CvRequestForm';
 /** "UTC+3" style label for a time zone, correct in summer and winter. */
 function utcLabel(timeZone: string): string {
   const part = new Intl.DateTimeFormat('en-GB', { timeZone, timeZoneName: 'shortOffset' }).formatToParts(new Date()).find((p) => p.type === 'timeZoneName');
@@ -30,6 +31,21 @@ function utcLabel(timeZone: string): string {
 
 // The Living Globe section. Set to false to hide it; it is loaded lazily, so it costs nothing while hidden.
 const SHOW_LIVING_GLOBE = true;
+/** On phones the job details start closed and open with a tap; from tablet width up they are always shown. */
+function Collapsible({ id, children }: { id: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className={`xp-collapsible${open ? ' is-open' : ''}`}>
+      <button type="button" className="xp-toggle" aria-expanded={open} aria-controls={id} onClick={() => setOpen((o) => !o)}>
+        {open ? 'Hide details' : 'Show details'}
+      </button>
+      <div id={id} className="xp-collapsible-body">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 const LivingGlobe = lazy(() => import('./components/LivingGlobe/LivingGlobe').then((m) => ({ default: m.LivingGlobe })));
 
 export default function App() {
@@ -323,14 +339,14 @@ export default function App() {
 
         {/* Mobile Navigation Dropdown */}
         {mobileMenuOpen && (
-          <nav className="lg:hidden border-b border-[var(--line)] bg-[var(--bg)] px-6 py-4 flex flex-col gap-2">
+          <nav aria-label="Menu" className="mobile-menu lg:hidden border-b border-[var(--line)] bg-[var(--bg)] px-5 py-3 grid grid-cols-2 min-[480px]:grid-cols-4 gap-x-4 gap-y-0">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 handleOpenAnonymous();
               }}
               type="button"
-              className="text-left py-2 text-sm font-semibold text-[var(--accent)] border-b border-[var(--line)] pb-2"
+              className="col-span-full text-left py-2 text-sm font-semibold text-[var(--accent)] border-b border-[var(--line)] mb-1"
             >
               🔒 Send Anonymous Note
             </button>
@@ -347,7 +363,7 @@ export default function App() {
                 key={label}
                 href={href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2 text-base font-medium text-[var(--muted)] hover:text-[var(--ink)]"
+                className="py-2 text-base font-medium text-[var(--muted)] hover:text-[var(--ink)] border-b border-[var(--line)]"
               >
                 {label}
               </a>
@@ -378,13 +394,14 @@ export default function App() {
               <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--muted)] mb-5 font-[var(--ui)]">
                 <span className="font-semibold text-[var(--ink)]">{siteData.profile.name}</span>
                 <span className="text-[var(--accent)] font-bold">/</span>
-                <span>{siteData.profile.role}</span>
-                <span className="text-[var(--accent)] font-bold">/</span>
                 <span>{siteData.profile.bases.join(' · ')}</span>
               </div>
 
+              {/* Role line */}
+              <p className="hero-role">{siteData.profile.role}</p>
+
               {/* Main Headline */}
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[var(--ink)] leading-[1.12]">
+              <h1 className="text-[1.65rem] sm:text-4xl md:text-5xl font-bold tracking-tight text-[var(--ink)] leading-[1.12]">
                 {intro.lead}{' '}
                 <span className="text-[var(--accent)] block sm:inline">
                   {intro.em}
@@ -393,7 +410,7 @@ export default function App() {
 
               {/* Lead Summary */}
               {intro.summary.map((para, i) => (
-                <p key={i} {...bnAttr} className="mt-6 text-lg sm:text-xl text-[var(--muted)] leading-relaxed max-w-2xl font-[var(--body)]">
+                <p key={i} {...bnAttr} className="mt-5 sm:mt-6 text-base sm:text-xl text-[var(--muted)] leading-relaxed max-w-2xl font-[var(--body)]">
                   {para}
                 </p>
               ))}
@@ -414,19 +431,22 @@ export default function App() {
                   Get in touch
                 </a>
               </div>
+              <button type="button" onClick={handleOpenAnonymous} className="hero-anon-link hero-cta">
+                Prefer to stay anonymous? Send a note
+              </button>
             </div>
 
             {/* Hero Right Visuals & Info Panel (5 cols) */}
-            <div className="lg:col-span-5 flex flex-col gap-5">
+            <div className="lg:col-span-5 flex flex-col gap-4 lg:mt-[3.4rem]">
               {/* Hero artwork, painted by code: Night Mode = dusk scene, Day Mode = late-afternoon scene */}
               <div className="flex flex-col gap-2">
                 <HelsinkiDhakaNetworkCanvas theme={theme} />
               </div>
 
               {/* Live Info Card */}
-              <aside className="print-hide border border-[var(--line)] rounded-2xl bg-[var(--panel)] p-5 shadow-sm">
+              <aside className="print-hide border border-[var(--line)] rounded-2xl bg-[var(--panel)] px-5 py-4 shadow-sm">
                 {/* Clocks */}
-                <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,6.5rem),1fr))] gap-4 pb-4 border-b border-[var(--line)]">
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,6.5rem),1fr))] gap-4 pb-3 border-b border-[var(--line)]">
                   <div className="text-center">
                     <span className="block font-[var(--display)] text-2xl font-bold tabular-nums text-[var(--ink)]">
                       {currentTime.helsinki}
@@ -434,6 +454,7 @@ export default function App() {
                     <span className="text-xs uppercase tracking-widest text-[var(--faint)] font-[var(--ui)]">
                       Helsinki
                     </span>
+                    <WorkStatus tz="Europe/Helsinki" />
                   </div>
                   <div className="text-center border-l border-[var(--line)] pl-4">
                     <span className="block font-[var(--display)] text-2xl font-bold tabular-nums text-[var(--ink)]">
@@ -442,13 +463,18 @@ export default function App() {
                     <span className="text-xs uppercase tracking-widest text-[var(--faint)] font-[var(--ui)]">
                       Dhaka
                     </span>
+                    <WorkStatus tz="Asia/Dhaka" />
                   </div>
                 </div>
 
-                {/* Availability status */}
-                <p className="text-xs text-center text-[var(--muted)] mt-6 pt-1 leading-relaxed font-[var(--ui)]">
-                  {intro.availability}
-                </p>
+                <p className="time-gap">Dhaka is {hoursAhead()} hours ahead of Helsinki.</p>
+
+                {/* Availability status: a separate message, set apart from the clocks */}
+                <div className="availability-block">
+                  <p className="text-xs text-center text-[var(--muted)] leading-relaxed font-[var(--ui)]">
+                    {intro.availability}
+                  </p>
+                </div>
 
                 {/* Social links */}
                 <div className="flex flex-wrap justify-center gap-4 text-sm mt-3 font-[var(--ui)]">
@@ -479,7 +505,7 @@ export default function App() {
                 </div>
 
                 {/* CV buttons: open a private Google Drive file (visitors request access). No CV file is stored in this project. */}
-                <div className="mt-4 pt-4 border-t border-[var(--line)] flex flex-col items-center gap-2">
+                <div className="mt-3 pt-3 border-t border-[var(--line)] flex flex-col items-center gap-1.5">
                   <div className="flex flex-wrap justify-center gap-2">
                     {siteData.profile.cv.map((c) =>
                       c.href ? (
@@ -516,6 +542,7 @@ export default function App() {
                   <p id="cv-note" className="text-[11px] text-[var(--muted)] text-center leading-snug font-[var(--ui)]">
                     {siteData.profile.cvNote}
                   </p>
+                  <CvRequestForm cvLabels={siteData.profile.cv.map((c) => c.label)} email={siteData.profile.links.email} />
                 </div>
               </aside>
             </div>
@@ -525,10 +552,10 @@ export default function App() {
         {/* PILLARS BAND */}
         <section className="border-y border-[var(--line)] bg-[var(--panel)] py-8">
           <div className="wrap">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
               {siteData.pillars.map((pillar) => (
-                <div key={pillar.title} className="flex flex-col">
-                  <h3 className="text-lg font-bold text-[var(--ink)] mb-2">
+                <div key={pillar.title} className="pillar-card flex flex-col">
+                  <h3 className="pillar-title font-bold text-[var(--ink)] mb-2">
                     {pillar.title}
                   </h3>
                   <p className="text-sm text-[var(--muted)] font-[var(--ui)] leading-relaxed">
@@ -544,7 +571,7 @@ export default function App() {
         <section id="about" className="py-16 md:py-24 border-b border-[var(--line)]">
           <div className="wrap">
             <div className="mb-10">
-              <h2 className="text-3xl md:text-4xl font-bold">About</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">About</h2>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
               {/* Bio Prose (7 cols) */}
@@ -553,7 +580,7 @@ export default function App() {
                   <p
                     key={i}
                     {...bnAttr}
-                    className="text-lg sm:text-[19px] leading-[1.85] text-[var(--ink)]"
+                    className="text-base sm:text-[19px] leading-[1.85] text-[var(--ink)]"
                   >
                     {para}
                   </p>
@@ -571,9 +598,7 @@ export default function App() {
                       key={i}
                       className="text-base text-[var(--ink)] flex items-start gap-2.5 pb-2.5 border-b border-[var(--line)] last:border-0 last:pb-0"
                     >
-                      <span className="text-[var(--accent)] font-serif font-bold text-lg leading-none">
-                        —
-                      </span>
+                      <span aria-hidden="true" className="mt-[0.6em] w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0" />
                       <span>{interest}</span>
                     </li>
                   ))}
@@ -609,10 +634,10 @@ export default function App() {
                               {pub.type}
                             </span>
                             <span className="text-[var(--faint)]">·</span>
-                            <span className="font-mono text-[var(--muted)] not-italic">{pub.year}</span>
+                            <span className="text-[var(--muted)] not-italic">{pub.year}</span>
                           </div>
                           {pub.doi ? (
-                            <span className="max-w-full break-all text-xs font-mono text-[var(--muted)] bg-[var(--panel-2)] px-2.5 py-1 rounded-md border border-[var(--line)] not-italic">
+                            <span className="max-w-full break-all text-xs text-[var(--muted)] bg-[var(--panel-2)] px-2.5 py-1 rounded-md border border-[var(--line)] not-italic">
                               DOI: {pub.doi}
                             </span>
                           ) : (
@@ -622,8 +647,9 @@ export default function App() {
                           )}
                         </div>
 
+                        <div className="pub-box">
                         {/* Title Zone */}
-                        <h3 className="text-xl sm:text-2xl font-bold font-serif text-[var(--ink)] leading-snug not-italic">
+                        <h3 className="text-lg sm:text-xl font-bold text-[var(--ink)] leading-snug not-italic">
                           {pub.bilingualTitle ? (
                             <div className="not-italic">
                               {pub.link ? (
@@ -635,22 +661,21 @@ export default function App() {
                                 >
                                   <span
                                     lang="bn"
-                                    className="font-['Noto_Sans_Bengali'] font-medium text-lg sm:text-xl leading-[1.45] text-[var(--ink)] block not-italic"
+                                    className="font-['Noto_Sans_Bengali'] font-medium text-base sm:text-lg leading-[1.45] text-[var(--ink)] block not-italic"
                                   >
                                     {pub.bilingualTitle.bn}
                                   </span>
-                                  <ExternalLink className="w-4 h-4 mt-1 text-[var(--muted)] group-hover:text-[var(--accent)] shrink-0 transition-colors" />
                                 </a>
                               ) : (
                                 <span
                                   lang="bn"
-                                  className="font-['Noto_Sans_Bengali'] font-medium text-lg sm:text-xl leading-[1.45] text-[var(--ink)] block not-italic"
+                                  className="font-['Noto_Sans_Bengali'] font-medium text-base sm:text-lg leading-[1.45] text-[var(--ink)] block not-italic"
                                 >
                                   {pub.bilingualTitle.bn}
                                 </span>
                               )}
-                              <div className="mt-1.5 text-xs sm:text-sm font-sans not-italic text-[var(--muted)] flex items-baseline gap-2">
-                                <span className="text-[11px] font-sans uppercase tracking-widest text-[var(--faint)] font-semibold shrink-0 not-italic">
+                              <div className="mt-1.5 text-xs sm:text-sm not-italic text-[var(--muted)] flex items-baseline gap-2">
+                                <span className="text-[11px] uppercase tracking-widest text-[var(--faint)] font-semibold shrink-0 not-italic">
                                   EN:
                                 </span>
                                 <span className="not-italic font-normal pub-title-font">{pub.bilingualTitle.en}</span>
@@ -664,7 +689,6 @@ export default function App() {
                               className="inline-flex items-start gap-2 group-hover:text-[var(--accent)] transition-colors not-italic"
                             >
                               <span className="not-italic">{pub.title}</span>
-                              <ExternalLink className="w-4 h-4 mt-1 text-[var(--muted)] group-hover:text-[var(--accent)] shrink-0 transition-colors" />
                             </a>
                           ) : (
                             <span className="not-italic">{pub.title}</span>
@@ -675,6 +699,14 @@ export default function App() {
                         <p className="mt-3.5 text-base text-[var(--ink)] opacity-90 leading-relaxed font-[var(--body)] text-justify-body not-italic">
                           {pub.desc}
                         </p>
+                        </div>
+                        {pub.abstract && (
+                          <details className="pub-abstract">
+                            <summary>{pub.abstractLabel ?? 'Read the working abstract'}</summary>
+                            <p lang={pub.abstractLang} className="pub-abstract-text">{pub.abstract}</p>
+                            <p className="pub-abstract-note">{pub.abstractNote ?? 'Working abstract. This paper is not published yet, and the details may change.'}</p>
+                          </details>
+                        )}
                       </div>
 
                       {/* Card Action Footer: external link only, no duplicate bottom DOI */}
@@ -684,10 +716,9 @@ export default function App() {
                             href={pub.link}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1 font-medium text-[var(--accent)] hover:underline ml-auto not-italic"
+                            className="pub-open-btn ml-auto not-italic"
                           >
                             <span className="not-italic">Open Publication</span>
-                            <ArrowUpRight className="w-3.5 h-3.5" />
                           </a>
                         </div>
                       )}
@@ -695,7 +726,7 @@ export default function App() {
                   ))}
                 </div>
               </div>
-              <CiteCraftPanel />
+              <div className="lg:mt-20"><CiteCraftPanel /></div>
             </div>
           </div>
         </section>
@@ -707,14 +738,14 @@ export default function App() {
               <h2 className="text-3xl md:text-4xl font-bold">Experience</h2>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,70fr)_minmax(0,30fr)] gap-8 items-start">
+            <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,70fr)_minmax(0,30fr)] gap-8 items-start">
             <div className="divide-y divide-[var(--line)] border-t border-b border-[var(--line)]">
               {siteData.experience.map((xp, idx) => (
                 <div
                   key={idx}
-                  className="py-8 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8"
+                  className="py-8 grid grid-cols-1 md:grid-cols-[8.5rem_minmax(0,1fr)] gap-3 md:gap-8"
                 >
-                  <div className="md:col-span-3 font-[var(--ui)]">
+                  <div className="font-[var(--ui)]">
                     <span className="text-sm font-semibold text-[var(--muted)] block">
                       {xp.when}
                     </span>
@@ -722,26 +753,48 @@ export default function App() {
                       {xp.place}
                     </span>
                   </div>
-                  <div className="md:col-span-9 flex flex-col">
-                    <h3 className="text-xl md:text-2xl font-bold text-[var(--ink)]">
+                  <div className="xp-main min-w-0 flex flex-col">
+                    <h3 className="xp-title font-bold text-[var(--ink)]">
                       {xp.role}{' '}
-                      <span className="text-[var(--accent)] font-normal font-serif">
+                      <span className="text-[var(--accent)] font-normal">
                         — {xp.org}
                       </span>
                     </h3>
                     {xp.impact && (
-                      <p className="mt-2 text-base text-[var(--ink)] font-medium">
+                      <p className="xp-impact mt-2 text-[var(--ink)] font-medium">
                         {xp.impact}
                       </p>
                     )}
+                    <Collapsible id={`xp-details-${idx}`}>
                     <ul className="mt-3 space-y-2 font-[var(--ui)] text-sm text-[var(--muted)]">
                       {xp.points.map((pt, pIdx) => (
                         <li key={pIdx} className="flex items-start gap-2.5">
-                          <span className="text-[var(--faint)] mt-1.5 leading-none">—</span>
-                          <span className="text-justify-body">{pt}</span>
+                          <span aria-hidden="true" className="mt-[0.55em] w-1.5 h-1.5 rounded-full bg-[var(--accent)] opacity-70 shrink-0" />
+                          <span className="text-justify-body min-w-0">{pt}</span>
                         </li>
                       ))}
                     </ul>
+                    </Collapsible>
+                  </div>
+                </div>
+              ))}
+              {siteData.personalExperience.map((pe) => (
+                <div key={pe.title} className="py-8 grid grid-cols-1 md:grid-cols-[8.5rem_minmax(0,1fr)] gap-3 md:gap-8">
+                  <div className="font-[var(--ui)]">
+                    <span className="personal-tag">Personal experience</span>
+                  </div>
+                  <div className="xp-main min-w-0 flex flex-col">
+                    <h3 className="xp-title font-bold text-[var(--ink)]">{pe.title}</h3>
+                    <Collapsible id={`pe-details-${pe.title.length}`}>
+                    <ul className="mt-3 space-y-2 font-[var(--ui)] text-sm text-[var(--muted)]">
+                      {pe.points.map((pt, i) => (
+                        <li key={i} className="flex items-start gap-2.5">
+                          <span aria-hidden="true" className="mt-[0.55em] w-1.5 h-1.5 rounded-full bg-[var(--accent)] opacity-70 shrink-0" />
+                          <span className="text-justify-body min-w-0">{pt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    </Collapsible>
                   </div>
                 </div>
               ))}
@@ -756,9 +809,6 @@ export default function App() {
           <div className="wrap">
             <div className="mb-10">
               <h2 className="text-3xl md:text-4xl font-bold">Selected Work</h2>
-              <p className="mt-2 text-base text-[var(--muted)] font-[var(--ui)]">
-                Products, tooling, and analytics — code and write-ups linked where public.
-              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -793,8 +843,13 @@ export default function App() {
                       {w.desc}
                     </p>
 
-                    {w.link && (
-                      <div className="mt-4 pt-4 border-t border-[var(--line)]">
+                    <div className="mt-4 pt-4 border-t border-[var(--line)] flex flex-wrap items-center gap-x-5 gap-y-3">
+                      {w.caseStudy && (
+                        <a href={`/work/${w.caseStudy}`} className="pub-open-btn">
+                          Read the case study
+                        </a>
+                      )}
+                      {w.link && (
                         <a
                           href={w.link}
                           target="_blank"
@@ -804,8 +859,8 @@ export default function App() {
                           {w.linkText || 'Open'}
                           <ArrowRight className="w-4 h-4 text-[var(--accent)]" />
                         </a>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </article>
               ))}
@@ -820,13 +875,13 @@ export default function App() {
               <h2 className="text-3xl md:text-4xl font-bold">Capabilities</h2>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-x-5 gap-y-8">
               {siteData.skills.map((cat) => (
-                <div key={cat.title} className="flex flex-col">
+                <div key={cat.title} className="skill-col flex flex-col min-w-0">
                   <h3 className="text-xs uppercase tracking-widest font-semibold text-[var(--accent)] mb-4 font-[var(--ui)]">
                     {cat.title}
                   </h3>
-                  <ul className="space-y-2.5 font-[var(--ui)] text-sm">
+                  <ul className="skill-list space-y-2.5 font-[var(--ui)]">
                     {cat.items.map((it) => (
                       <li key={it.name} className="flex items-center justify-between text-[var(--ink)]">
                         <span>{it.name}</span>
@@ -854,13 +909,13 @@ export default function App() {
             {/* Education & Academic Cards (2x2 Grid) */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch">
               {/* Row 1, Card 1: Master's Degree */}
-              <article className="border border-[var(--line)] rounded-2xl bg-[var(--panel)] p-6 sm:p-7 shadow-sm flex flex-col justify-between hover:border-[var(--line-strong)] transition-colors">
+              <article className="edu-card border border-[var(--line)] rounded-2xl bg-[var(--panel)] p-6 sm:p-7 shadow-sm flex flex-col justify-between hover:border-[var(--line-strong)] transition-colors">
                 <div>
                   <div className="flex items-center justify-between text-xs font-[var(--ui)] text-[var(--faint)] uppercase tracking-wider font-semibold mb-3.5">
                     <span>Degree · Master's</span>
                     <span>2021 – 2023</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-[var(--ink)] leading-snug mb-5 sm:mb-6">
+                  <h3 className="edu-title font-bold text-[var(--ink)] mb-5 sm:mb-6">
                     Master's in <span className="text-[var(--accent)]">{siteData.education.degrees[0].title}</span> (MSc)
                   </h3>
                   <p className="edu-meta text-xs font-[var(--ui)] text-[var(--muted)] text-left">
@@ -881,14 +936,14 @@ export default function App() {
               </article>
 
               {/* Row 1, Card 2: Bachelor's Degree */}
-              <article className="border border-[var(--line)] rounded-2xl bg-[var(--panel)] p-6 sm:p-7 shadow-sm flex flex-col justify-between hover:border-[var(--line-strong)] transition-colors">
+              <article className="edu-card border border-[var(--line)] rounded-2xl bg-[var(--panel)] p-6 sm:p-7 shadow-sm flex flex-col justify-between hover:border-[var(--line-strong)] transition-colors">
                 <div>
                   <div className="flex items-center justify-between text-xs font-[var(--ui)] text-[var(--faint)] uppercase tracking-wider font-semibold mb-3.5">
                     <span>Degree · Bachelor's</span>
                     <span>2016 – 2020</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-[var(--ink)] leading-snug mb-5 sm:mb-6">
-                    Bachelor of <span className="text-[var(--accent)]">{siteData.education.degrees[1].title}</span>
+                  <h3 className="edu-title font-bold text-[var(--ink)] mb-5 sm:mb-6">
+                    Bachelor of <span className="text-[var(--accent-alt)]">{siteData.education.degrees[1].title}</span>
                   </h3>
                   <p className="edu-meta text-xs font-[var(--ui)] text-[var(--muted)] text-left">
                     {siteData.education.degrees[1].org} · {siteData.education.degrees[1].place}
@@ -908,15 +963,15 @@ export default function App() {
               </article>
 
               {/* Row 2, Card 3: Student Tutor (Academic Activity) */}
-              <article className="border border-[var(--line)] rounded-2xl bg-[var(--panel)] p-6 sm:p-7 shadow-sm flex flex-col justify-between hover:border-[var(--line-strong)] transition-colors">
+              <article className="edu-card border border-[var(--line)] rounded-2xl bg-[var(--panel)] p-6 sm:p-7 shadow-sm flex flex-col justify-between hover:border-[var(--line-strong)] transition-colors">
                 <div>
                   <div className="flex items-center justify-between text-xs font-[var(--ui)] text-[var(--faint)] uppercase tracking-wider font-semibold mb-3.5">
                     <span>Academic Activity</span>
                     <span>{siteData.education.activities[0].when}</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-[var(--ink)] leading-snug mb-5 sm:mb-6">
+                  <h3 className="edu-title font-bold text-[var(--ink)] mb-5 sm:mb-6">
                     {siteData.education.activities[0].role}{' '}
-                    <span className="text-[var(--accent)] font-normal font-serif">
+                    <span className="text-[var(--accent)] font-normal">
                       — {siteData.education.activities[0].org}
                     </span>
                   </h3>
@@ -935,27 +990,29 @@ export default function App() {
               </article>
 
               {/* Row 2, Card 4: Project Manager (VRGP Academic Project) */}
-              <article className="border border-[var(--line)] rounded-2xl bg-[var(--panel)] p-6 sm:p-7 shadow-sm flex flex-col justify-between hover:border-[var(--line-strong)] transition-colors">
+              <article className="edu-card border border-[var(--line)] rounded-2xl bg-[var(--panel)] p-6 sm:p-7 shadow-sm flex flex-col justify-between hover:border-[var(--line-strong)] transition-colors">
                 <div>
                   <div className="flex items-center justify-between text-xs font-[var(--ui)] text-[var(--faint)] uppercase tracking-wider font-semibold mb-3.5">
                     <span>Academic Project</span>
                     <span>{siteData.education.project.when}</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-[var(--ink)] leading-snug mb-5 sm:mb-6">
+                  <h3 className="edu-title font-bold text-[var(--ink)] mb-5 sm:mb-6">
                     {siteData.education.project.role}{' '}
-                    <span className="text-[var(--accent)] font-normal font-serif">
+                    <span className="text-[var(--accent)] font-normal">
                       — {siteData.education.project.title}
                     </span>
                   </h3>
                   <p className="edu-meta text-xs font-[var(--ui)] text-[var(--muted)] text-left">
-                    {siteData.education.project.org} · ICT Showroom 2022
+                    {siteData.education.project.fullTitle} — {siteData.education.project.org} · ICT Showroom 2022
                   </p>
                   <p className="text-base text-[var(--muted)] leading-[1.65] text-left font-[var(--ui)]">
                     {siteData.education.project.desc}
                   </p>
                 </div>
-                <div className="mt-5 pt-4 border-t border-[var(--line)] flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex flex-wrap gap-1.5">
+                <div className="mt-5 pt-4 border-t border-[var(--line)] flex flex-col gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-xs uppercase tracking-wider font-semibold text-[var(--faint)] font-[var(--ui)]">Awards</span>
+                    <div className="flex flex-wrap gap-1.5">
                     {siteData.education.project.awards.map((award) => (
                       <span
                         key={award}
@@ -965,17 +1022,19 @@ export default function App() {
                         {award}
                       </span>
                     ))}
+                    </div>
                   </div>
                   {siteData.education.project.link && (
-                    <a
-                      href={siteData.education.project.link}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--accent)] hover:underline font-[var(--ui)] whitespace-nowrap"
-                    >
-                      {siteData.education.project.linkText}
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
+                    <div className="flex justify-center">
+                      <a
+                        href={siteData.education.project.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sm font-semibold text-[var(--accent)] hover:underline whitespace-nowrap"
+                      >
+                        {siteData.education.project.linkText}
+                      </a>
+                    </div>
                   )}
                 </div>
               </article>
@@ -1008,7 +1067,7 @@ export default function App() {
                             <span className="font-medium text-[var(--ink)] text-sm">
                               {item.name}
                             </span>
-                            <span className="text-[var(--muted)] font-mono text-xs shrink-0 font-medium bg-[var(--panel)] px-2 py-0.5 rounded border border-[var(--line)]">
+                            <span className="text-[var(--muted)] text-xs shrink-0 font-medium bg-[var(--panel)] px-2 py-0.5 rounded border border-[var(--line)]">
                               {item.year}
                             </span>
                           </div>
@@ -1052,7 +1111,7 @@ export default function App() {
               {/* Left Column (7 cols): Section Lead & Compact Contact Form */}
               <div className="lg:col-span-7 flex flex-col gap-6">
                 <div>
-                  <h2 className="text-3xl md:text-4xl font-bold font-serif text-[var(--ink)] mb-3">
+                  <h2 className="text-3xl md:text-4xl font-bold text-[var(--ink)] mb-3">
                     Let's talk.
                   </h2>
                   <p className="text-base sm:text-lg text-[var(--muted)] leading-relaxed font-[var(--body)]">
@@ -1074,20 +1133,20 @@ export default function App() {
                 <aside className="print-hide border border-[var(--line-strong)] rounded-2xl bg-[var(--panel)] p-5 sm:p-6 shadow-sm">
                   <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-3 border-b border-[var(--line)]">
                     <div className="flex items-center gap-2">
-                      <span className="w-8 h-8 rounded-lg bg-[#0a66c2]/10 text-[#0a66c2] dark:text-[#70b5f9] flex items-center justify-center font-bold text-base">
+                      <span className="li-icon w-8 h-8 rounded-lg flex items-center justify-center font-bold text-base">
                         in
                       </span>
                       <div>
                         <h4 className="text-sm font-bold font-[var(--ui)] text-[var(--ink)]">
                           LinkedIn Professional
                         </h4>
-                        <span className="text-[11px] font-mono text-[var(--faint)]">
+                        <span className="text-[11px] text-[var(--faint)]">
                           @meshahredoy
                         </span>
                       </div>
                     </div>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-medium font-[var(--ui)]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="status-active inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[13px] font-semibold font-[var(--ui)]">
+                      <span className="status-dot w-1.5 h-1.5 rounded-full animate-pulse" />
                       Active
                     </span>
                   </div>
@@ -1099,7 +1158,6 @@ export default function App() {
                     className="btn-linkedin-light inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl text-xs font-semibold font-[var(--ui)] transition-colors"
                   >
                     <span>Connect on LinkedIn</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
                   </a>
                 </aside>
 
@@ -1114,7 +1172,7 @@ export default function App() {
                     <div className="text-center">
                       <div className="inline-flex max-w-full items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--panel-2)] border border-[var(--line)]">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-                        <span className="font-mono text-sm font-bold tabular-nums text-[var(--ink)] tracking-wider">
+                        <span className="text-sm font-bold tabular-nums text-[var(--ink)] tracking-wider">
                           {currentTime.helsinki}
                         </span>
                       </div>
@@ -1126,7 +1184,7 @@ export default function App() {
                     <div className="text-center">
                       <div className="inline-flex max-w-full items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--panel-2)] border border-[var(--line)]">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-                        <span className="font-mono text-sm font-bold tabular-nums text-[var(--ink)] tracking-wider">
+                        <span className="text-sm font-bold tabular-nums text-[var(--ink)] tracking-wider">
                           {currentTime.dhaka}
                         </span>
                       </div>

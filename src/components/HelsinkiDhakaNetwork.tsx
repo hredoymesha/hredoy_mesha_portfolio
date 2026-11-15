@@ -324,7 +324,7 @@ export function HelsinkiDhakaNetworkCanvas({
     >
       <canvas
         ref={canvasRef}
-        className="block w-full aspect-square"
+        className="block w-full aspect-[10/9] object-cover object-[50%_72%]"
         role="img"
         aria-label={
           theme === 'dark'

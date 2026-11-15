@@ -6,9 +6,9 @@
 |---|---|
 | `npm run lint` | TypeScript type check |
 | `npm run test:unit` | the sun-position maths for the globe |
-| `npm run test:server` | contact API (delivery messages, spam protection, escaping, rate limits), security headers, static serving |
+| `npm run test:server` | contact API (delivery messages, spam protection, escaping, rate limits), security headers, static serving, which addresses answer 200 and which 404, and that the case-study list matches the sitemap |
 | `npm run test:scan` | no PDFs, phone numbers, third-party hosts or leftover files in the source and in `dist/` |
-| `npm run test:e2e` | in a browser: no console errors, only same-origin requests, CV buttons, contact form, English/Bengali switch, print profile, day and night globe, accessibility (axe), CiteCraft through the proxy |
+| `npm run test:e2e` | in a browser: no console errors, only same-origin requests, CV buttons, contact form, English/Bengali switch, print profile, day and night globe, accessibility (axe), CiteCraft through the proxy, the case-study pages and the page-not-found screen, the CV request form, the phone menu and the phone experience details |
 | `npm run test:matrix` | 34 screen sizes in light mode (eight also in dark) and browser text size 150%, 200% and 300%. `npm run matrix:write` rewrites `docs/RESPONSIVE-TEST-MATRIX.md` |
 | `npm run test:citecraft` | CiteCraft Python tests (pytest) |
 | `npm run test:citecraft-ui` | CiteCraft panel in a browser: add, edit, delete, import, export, reload |

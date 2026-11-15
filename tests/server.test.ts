@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import type { AddressInfo } from 'node:net';
 import { after, before, describe, it } from 'node:test';
-import { createApp, explainMailError, stripEnvQuotes, escapeHtml, singleLine, SlidingWindowLimiter, CONTENT_SECURITY_POLICY, type AppOptions, type Mailer } from '../server/app';
+import { CASE_STUDY_PATHS, createApp, explainMailError, stripEnvQuotes, escapeHtml, singleLine, SlidingWindowLimiter, CONTENT_SECURITY_POLICY, type AppOptions, type Mailer } from '../server/app';
 
 type Sent = Record<string, unknown>;
 
@@ -284,6 +284,35 @@ describe('security headers and routing', () => {
     } finally {
       await ctx.close();
     }
+  });
+
+  it('answers the home page and the case-study pages with 200, and any other page with 404 plus the same page', async () => {
+    const dist = fs.mkdtempSync(path.join(os.tmpdir(), 'dist-'));
+    fs.writeFileSync(path.join(dist, 'index.html'), '<!doctype html><title>ok</title>');
+    const ctx = await start({ distDir: dist });
+    try {
+      for (const p of ['/', '/index.html', ...CASE_STUDY_PATHS, CASE_STUDY_PATHS[0] + '/']) {
+        const res = await fetch(ctx.base + p);
+        assert.equal(res.status, 200, p);
+        assert.ok((await res.text()).includes('<title>ok</title>'));
+      }
+      for (const p of ['/nope', '/work', '/work/unknown', '/some/route']) {
+        const res = await fetch(ctx.base + p);
+        assert.equal(res.status, 404, p);
+        assert.ok((await res.text()).includes('<title>ok</title>'), 'the 404 still serves the app, which shows the page-not-found screen');
+      }
+    } finally {
+      await ctx.close();
+      fs.rmSync(dist, { recursive: true, force: true });
+    }
+  });
+
+  it('lists the same case-study pages as the site data and the sitemap', () => {
+    const data = fs.readFileSync(path.join(process.cwd(), 'src/data/caseStudies.ts'), 'utf8');
+    const slugs = [...data.matchAll(/^\s+slug: '([a-z0-9-]+)'/gm)].map((m) => '/work/' + m[1]).sort();
+    assert.deepEqual([...CASE_STUDY_PATHS].sort(), slugs);
+    const sitemap = fs.readFileSync(path.join(process.cwd(), 'public/sitemap.xml'), 'utf8');
+    for (const p of CASE_STUDY_PATHS) assert.ok(sitemap.includes('https://hredoymesha.com' + p + '<'), p + ' is in the sitemap');
   });
 
   it('serves the built site with a single-page-app fallback and 404 for missing files', async () => {
