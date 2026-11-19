@@ -253,7 +253,8 @@ try {
   {
     const caseSrc = fs.readFileSync(path.join(root, "src/data/caseStudies.ts"), "utf8");
     const slugs = [...caseSrc.matchAll(/^\s+slug: '([a-z0-9-]+)'/gm)].map((m) => m[1]);
-    R.ok(slugs.length === siteData.work.length && siteData.work.every((w) => slugs.includes(w.caseStudy)), `every Selected Work item has a case-study page (${slugs.join(", ")})`);
+    // Cards with a caseStudy must point at a real page. Some cards have none (Personal Assistant), and a case-study page may exist for a card that is hidden for now.
+    R.ok(siteData.work.filter((w) => w.caseStudy).every((w) => slugs.includes(w.caseStudy)), `every Selected Work item that has a case study points at a real page (${slugs.join(", ")})`);
     for (const theme of ["light", "dark"]) {
       for (const slug of slugs) {
         const ctx = await b.newContext({ viewport: { width: 360, height: 740 }, colorScheme: theme });
@@ -285,7 +286,10 @@ try {
     {
       const { ctx, page, problems, requests } = await open(b, base);
       const links = await page.evaluate(() => [...document.querySelectorAll("#work article a[href^='/work/']")].map((a) => a.getAttribute("href")));
-      R.ok(links.length === siteData.work.length && links.every((h) => slugs.includes(h.replace("/work/", ""))), `Selected Work shows ${links.length} "Read the case study" buttons that point at real pages`);
+      R.ok(links.length === siteData.work.filter((w) => w.caseStudy).length && links.every((h) => slugs.includes(h.replace("/work/", ""))), `Selected Work shows ${links.length} "Read the case study" buttons that point at real pages`);
+      const pa = await page.evaluate(() => { const a = [...document.querySelectorAll("#work article")].find((x) => x.querySelector("h3")?.textContent === "Personal Assistant"); return a ? { n: [...document.querySelectorAll("#work article")].indexOf(a) + 1, btns: [...a.querySelectorAll("a")].map((l) => ({ t: l.textContent.replace(/\s*\(opens in a new tab\)/, "").trim(), h: l.getAttribute("href"), tg: l.getAttribute("target"), rel: l.getAttribute("rel") })) } : null; });
+      const paData = siteData.work.find((w) => w.title === "Personal Assistant");
+      R.ok(!!pa && pa.n === 3 && pa.btns.length === 2 && pa.btns.every((b) => b.tg === "_blank" && /noopener/.test(b.rel)) && JSON.stringify(pa.btns.map((b) => [b.t, b.h])) === JSON.stringify(paData.actions.map((a) => [a.label, a.url])), "the Personal Assistant card is third and has two buttons (Web preview, Download APK) that open in a new tab, and no case-study link");
       // hero button: opens the anonymous note
       await page.getByRole("button", { name: /Prefer to stay anonymous/ }).click();
       const inView = await page.waitForFunction(() => { const r = document.getElementById("contact").getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; }, null, { timeout: 8000 }).then(() => true, () => false);
