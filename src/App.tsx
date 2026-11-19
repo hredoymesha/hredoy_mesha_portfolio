@@ -16,7 +16,7 @@ import {
   Award,
   GraduationCap
 } from 'lucide-react';
-import { siteData } from './data/siteData';
+import { siteData, type WorkItem } from './data/siteData';
 import { HelsinkiDhakaNetworkCanvas } from './components/HelsinkiDhakaNetwork';
 import { ContactSection } from './components/ContactSection';
 import { CareerTimeline } from './components/CareerTimeline';
@@ -44,6 +44,29 @@ function Collapsible({ id, children }: { id: string; children: React.ReactNode }
       </div>
     </div>
   );
+}
+
+/** The picture box of a Selected Work card: the image, or a muted looping video when the card has one (the poster only if the visitor prefers reduced motion). */
+function WorkMedia({ item }: { item: WorkItem }) {
+  const query = '(prefers-reduced-motion: reduce)';
+  const [reduced, setReduced] = useState(() => typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia(query).matches);
+  useEffect(() => {
+    if (!window.matchMedia) return;
+    const mq = window.matchMedia(query);
+    const onChange = () => setReduced(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  const mediaClass = 'w-full h-full object-cover object-top transform-gpu backface-hidden [image-rendering:auto] group-hover:scale-[1.02] transition-transform duration-300';
+  if (item.video && !reduced) {
+    return (
+      <video className={mediaClass} autoPlay muted loop playsInline preload="metadata" poster={item.video.poster} aria-label={item.imgAlt}>
+        {item.video.webm && <source src={item.video.webm} type="video/webm" />}
+        <source src={item.video.mp4} type="video/mp4" />
+      </video>
+    );
+  }
+  return <img src={item.video ? item.video.poster : item.img} alt={item.imgAlt} className={mediaClass} loading="lazy" decoding="async" />;
 }
 
 const LivingGlobe = lazy(() => import('./components/LivingGlobe/LivingGlobe').then((m) => ({ default: m.LivingGlobe })));
@@ -819,13 +842,7 @@ export default function App() {
                 >
                   {/* Media container */}
                   <div className="aspect-[16/10] bg-[var(--panel-2)] overflow-hidden relative">
-                    <img
-                      src={w.img}
-                      alt={w.imgAlt}
-                      className="w-full h-full object-cover object-top transform-gpu backface-hidden [image-rendering:auto] group-hover:scale-[1.02] transition-transform duration-300"
-                      loading="lazy"
-                      decoding="async"
-                    />
+                    <WorkMedia item={w} />
                   </div>
 
                   {/* Body */}
@@ -843,6 +860,16 @@ export default function App() {
                       {w.desc}
                     </p>
 
+                    {w.actions ? (
+                      <div className="mt-4 pt-4 border-t border-[var(--line)] flex flex-wrap items-center gap-3">
+                        {w.actions.map((action) => (
+                          <a key={action.url} href={action.url} target="_blank" rel="noopener noreferrer" className="pub-open-btn">
+                            {action.label}
+                            <span className="sr-only"> (opens in a new tab)</span>
+                          </a>
+                        ))}
+                      </div>
+                    ) : (
                     <div className="mt-4 pt-4 border-t border-[var(--line)] flex flex-wrap items-center gap-x-5 gap-y-3">
                       {w.caseStudy && (
                         <a href={`/work/${w.caseStudy}`} className="pub-open-btn">
@@ -861,6 +888,7 @@ export default function App() {
                         </a>
                       )}
                     </div>
+                    )}
                   </div>
                 </article>
               ))}

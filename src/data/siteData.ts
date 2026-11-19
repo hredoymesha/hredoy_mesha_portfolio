@@ -81,6 +81,10 @@ export interface WorkItem {
   linkText?: string;
   /** Slug of the case-study page for this item (see caseStudies.ts). */
   caseStudy?: string;
+  /** Optional buttons for the card footer (for example "Web preview" and "Download APK"). When present they replace the single link. */
+  actions?: { label: string; url: string }[];
+  /** Optional short looping video, shown in the picture box instead of the image. The poster is shown when the visitor prefers reduced motion. Not used yet. */
+  video?: { mp4: string; webm?: string; poster: string };
 }
 
 export interface SkillCategory {
@@ -453,6 +457,17 @@ export const siteData: SiteData = {
       linkText: "Source"
     },
     {
+      tag: "Android & web app · Testing preview",
+      title: "Personal Assistant",
+      desc: "A local-first app for tasks, money, monthly bills and shared mess accounts, in English and Bangla. No account, no server, nothing tracked. Encrypted backups, and exports to CSV, Excel and PDF. Testing preview; coming soon to Google Play.",
+      img: "/assets/work-personal-assistant.webp",
+      imgAlt: "Screenshot of the Personal Assistant web app on its Home screen with sample data loaded. A banner at the top says it is a testing preview and has a Download APK button. Below, an At a glance summary shows 5 open tasks, 2 due today, 0 overdue, 4 open debts, 3 savings goals and 4 wallets, with income and mess expenses in taka. The bottom bar has Home, Tasks, Money, Cycle and Settings.",
+      actions: [
+        { label: "Web preview", url: "https://assistant.hredoymesha.com/" },
+        { label: "Download APK", url: "https://github.com/hredoymesha/personal-assistant/releases/latest/download/personal-assistant-preview.apk" }
+      ]
+    },
+    {
       tag: "Business analytics · Excel",
       title: "Retail Operations Dashboard",
       caseStudy: "retail-operations-dashboard",
@@ -462,6 +477,9 @@ export const siteData: SiteData = {
       link: "https://github.com/hredoymesha/excel-retail-operations-dashboard",
       linkText: "Source"
     },
+    // Hidden from Selected Work for now. Its case study page (/work/fundraising-kpi-analysis) and picture stay in place.
+    // To show it again, remove the two comment markers (the slash-star and star-slash lines) around it.
+    /*
     {
       tag: "Python · KPI",
       title: "Fundraising KPI Analysis",
@@ -472,6 +490,7 @@ export const siteData: SiteData = {
       link: "https://github.com/hredoymesha/fundraising-kpi-analysis",
       linkText: "Source"
     }
+    */
   ],
 
   skills: [
