@@ -81,7 +81,7 @@ export interface WorkItem {
   linkText?: string;
   /** Slug of the case-study page for this item (see caseStudies.ts). */
   caseStudy?: string;
-  /** Optional buttons for the card footer (for example "Web preview" and "Download APK"). When present they replace the single link. */
+  /** Optional buttons for the card footer (for example "Web preview" and "Download APK"). When present they replace the single link; a case-study button, if the item has one, is shown first. */
   actions?: { label: string; url: string }[];
   /** Optional short looping video, shown in the picture box instead of the image. The poster is shown when the visitor prefers reduced motion. Not used yet. */
   video?: { mp4: string; webm?: string; poster: string };
@@ -453,8 +453,9 @@ export const siteData: SiteData = {
       desc: "A privacy-first Chrome extension that inspects, edits, audits, recreates, and exports any web interface — every operation runs locally, nothing leaves the browser.",
       img: "/assets/work-devforge.webp",
       imgAlt: "Preview of the DevForge — Web Dev Workbench browser extension.",
-      link: "https://github.com/hredoymesha/devforge",
-      linkText: "Source"
+      actions: [
+        { label: "Chrome Web Store", url: "https://chromewebstore.google.com/detail/devforge-%E2%80%94-web-dev-workbe/ofeflmhckkgemcpfkmieekiojoopdgae" }
+      ]
     },
     {
       tag: "Android & web app · Testing preview",

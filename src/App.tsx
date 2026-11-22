@@ -862,6 +862,11 @@ export default function App() {
 
                     {w.actions ? (
                       <div className="mt-4 pt-4 border-t border-[var(--line)] flex flex-wrap items-center gap-3">
+                        {w.caseStudy && (
+                          <a href={`/work/${w.caseStudy}`} className="pub-open-btn">
+                            Read the case study
+                          </a>
+                        )}
                         {w.actions.map((action) => (
                           <a key={action.url} href={action.url} target="_blank" rel="noopener noreferrer" className="pub-open-btn">
                             {action.label}
