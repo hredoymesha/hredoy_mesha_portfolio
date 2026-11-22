@@ -449,7 +449,7 @@ export const siteData: SiteData = {
     {
       tag: "Browser extension",
       title: "DevForge — Web Dev Workbench",
-      caseStudy: "devforge",
+      /*caseStudy: "devforge",*/
       desc: "A privacy-first Chrome extension that inspects, edits, audits, recreates, and exports any web interface — every operation runs locally, nothing leaves the browser.",
       img: "/assets/work-devforge.webp",
       imgAlt: "Preview of the DevForge — Web Dev Workbench browser extension.",
