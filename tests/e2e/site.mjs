@@ -47,7 +47,7 @@ try {
       // The check below still runs whenever the credit is in the page; if it is commented out on purpose, it is reported instead of failed.
       const globeSrc = fs.readFileSync(path.join(root, "src/components/LivingGlobe/LivingGlobe.tsx"), "utf8");
       const creditSwitchedOff = /\{\/\*[\s\S]*?Textures: Solar System Scope[\s\S]*?\*\/\}/.test(globeSrc);
-      if (creditSwitchedOff) R.info(`[${theme}] the Earth-image credit line is switched off by the owner (commented out in LivingGlobe.tsx), so it is not checked`);
+      if (creditSwitchedOff) R.info(`[${theme}] the Earth-image credit line is switched off (commented out in LivingGlobe.tsx), so it is not checked`);
       else R.ok(await page.getByText(/Textures: Solar System Scope/).isVisible(), `[${theme}] the Earth-image credit line is shown`);
       if (theme === "light") {
         const cv = page.locator("#globe canvas"); const box = await cv.boundingBox();

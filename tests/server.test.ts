@@ -62,7 +62,7 @@ describe('contact form: accurate delivery status', () => {
     assert.equal(ctx.sent[0].replyTo, 'alex@example.org');
   });
 
-  it('keeps the visitor IP and the message in the log (as required by the owner)', async () => {
+  it('keeps the visitor IP and the message in the log (by design)', async () => {
     const res = await ctx.post({ ...valid, message: 'Keep me in the log' }, { 'x-forwarded-for': '203.0.113.7' });
     assert.equal(res.status, 200);
     const last = ctx.logLines().at(-1);
