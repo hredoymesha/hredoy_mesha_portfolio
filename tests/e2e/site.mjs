@@ -17,7 +17,7 @@ const base = srv.base;
 const b = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
 
 try {
-  // ---------- smoke, CSP, third-party requests, art ----------
+  // smoke, CSP, third-party requests, art
   for (const theme of ["light", "dark"]) {
     const { ctx, page, problems, hosts, requests } = await open(b, base, { theme });
     const r = await page.evaluate(() => ({
@@ -43,7 +43,7 @@ try {
       const tex = await page.evaluate(async () => (await Promise.all(["daymap", "nightmap", "clouds"].map((n) => fetch(`/textures/earth-${n}-2k.jpg`).then((r) => r.headers.get("content-type"))))).join());
       R.ok(/image\/jpeg.*image\/jpeg.*image\/jpeg/.test(tex), `[${theme}] the three Earth images are served as pictures (${tex})`);
       await page.locator("#globe").scrollIntoViewIfNeeded(); await page.waitForTimeout(2500);
-      // The owner has chosen to keep the credit line (and the globe help text) switched off in a code comment in LivingGlobe.tsx.
+      // The credit line (and the globe help text) is switched off with a code comment in LivingGlobe.tsx.
       // The check below still runs whenever the credit is in the page; if it is commented out on purpose, it is reported instead of failed.
       const globeSrc = fs.readFileSync(path.join(root, "src/components/LivingGlobe/LivingGlobe.tsx"), "utf8");
       const creditSwitchedOff = /\{\/\*[\s\S]*?Textures: Solar System Scope[\s\S]*?\*\/\}/.test(globeSrc);
@@ -117,7 +117,7 @@ try {
     await ctx.close();
   }
 
-  // ---------- CV buttons: private Google Drive links ----------
+  // CV buttons: private Google Drive links
   {
     const { ctx, page } = await open(b, base);
     const cv = page.locator('[data-cv="drive"]');
@@ -129,7 +129,7 @@ try {
     await ctx.close();
   }
 
-  // ---------- LinkedIn card ----------
+  // LinkedIn card
   for (const theme of ["light", "dark"]) {
     const { ctx, page } = await open(b, base, { theme });
     await ctx.route(/linkedin\.com/, (r) => r.fulfill({ status: 200, contentType: "text/html", body: "<title>mock</title>" }));
@@ -148,7 +148,7 @@ try {
     await ctx.close();
   }
 
-  // ---------- removed texts ----------
+  // removed texts
   {
     const { ctx, page } = await open(b, base);
     const all = await page.evaluate(() => document.body.innerText + document.documentElement.outerHTML);
@@ -157,7 +157,7 @@ try {
     await ctx.close();
   }
 
-  // ---------- contact form: accurate feedback, spam trap ----------
+  // contact form: accurate feedback, spam trap
   {
     const { ctx, page } = await open(b, base, { width: 1280 });
     await page.locator("#contact").scrollIntoViewIfNeeded();
@@ -184,7 +184,7 @@ try {
     await ctx.close();
   }
 
-  // ---------- EN / বাংলা switch ----------
+  // EN / বাংলা switch
   for (const width of [320, 390, 768, 1280, 1920]) {
     const { ctx, page } = await open(b, base, { width, height: 900 });
     const en = siteData.profile.summary;
@@ -207,7 +207,7 @@ try {
     await ctx.close();
   }
 
-  // ---------- print profile ----------
+  // print profile
   {
     const { ctx, page } = await open(b, base);
     await page.emulateMedia({ media: "print" });
@@ -222,7 +222,7 @@ try {
     await ctx.close();
   }
 
-  // ---------- accessibility (axe) ----------
+  // accessibility (axe)
   // Known, documented and NOT changed (design is frozen): white text on the light-green accent in dark mode.
   const KNOWN_CONTRAST = []; // none: the four green buttons now use dark text in dark mode
   for (const [w, theme, lang] of [[390, "light"], [1280, "light"], [390, "dark"], [1280, "dark"], [1280, "light", "bn"], [1280, "dark", "bn"]]) {
@@ -238,7 +238,7 @@ try {
     await ctx.close();
   }
 
-  // ---------- accessibility of the globe's Day & Night view (not the default tab, so the loop above never sees it) ----------
+  // accessibility of the globe's Day & Night view (not the default tab, so the loop above never sees it)
   for (const theme of ["light", "dark"]) {
     const { ctx, page } = await open(b, base, { width: 1280, theme });
     await page.locator("#globe").scrollIntoViewIfNeeded();
@@ -249,7 +249,7 @@ try {
     await ctx.close();
   }
 
-  // ---------- case-study pages, 404 screen, hero button, CV request form, phone details and menu ----------
+  // case-study pages, 404 screen, hero button, CV request form, phone details and menu
   {
     const caseSrc = fs.readFileSync(path.join(root, "src/data/caseStudies.ts"), "utf8");
     const slugs = [...caseSrc.matchAll(/^\s+slug: '([a-z0-9-]+)'/gm)].map((m) => m[1]);
@@ -337,7 +337,7 @@ try {
     }
   }
 
-  // ---------- CiteCraft through the Node proxy ----------
+  // CiteCraft through the Node proxy
   if (!withCiteCraft) R.skip("CiteCraft proxy tests (no Python environment found: create citecraft/.venv, see README)");
   else {
     const h = await fetch(base + "/api/citecraft/health");

@@ -1,6 +1,4 @@
-// LivingGlobe — Core Three.js globe renderer
-// Manages scene, camera, renderer, and animation loop
-// Creates one shared globe instance used by all visualization modes
+// Three.js renderer for the globe, shared by all views.
 
 import { HIGHLIGHT_BORDERS } from '../data/borders';
 import * as THREE from 'three';
@@ -81,34 +79,34 @@ function createEarthTexture(width: number, height: number): THREE.CanvasTexture 
   const tundra = '#82e0aa';      // Light green for northern areas
   const ice = '#eaf2f3';         // White for ice caps
 
-  // === NORTH AMERICA ===
+  // North America
   drawLand(0.20, 0.28, 0.08, 0.06, green); // Western US/Canada
   drawLand(0.16, 0.22, 0.05, 0.04, tundra); // Alaska/Canada north
   drawLand(0.24, 0.32, 0.04, 0.05, greenLight); // Eastern US
   drawLand(0.22, 0.38, 0.03, 0.04, green); // Mexico/Central America
   drawLand(0.26, 0.14, 0.04, 0.03, ice); // Greenland
 
-  // === SOUTH AMERICA ===
+  // South America
   drawLand(0.27, 0.55, 0.04, 0.06, green); // Brazil
   drawLand(0.25, 0.50, 0.03, 0.04, greenDark); // Andes
   drawLand(0.26, 0.62, 0.03, 0.05, greenLight); // Argentina
   drawLand(0.28, 0.68, 0.02, 0.03, green); // Southern cone
 
-  // === EUROPE ===
+  // Europe
   drawLand(0.48, 0.22, 0.04, 0.03, green); // Western Europe
   drawLand(0.50, 0.20, 0.03, 0.02, greenLight); // Scandinavia
   drawLand(0.52, 0.24, 0.03, 0.03, green); // Eastern Europe
   drawLand(0.47, 0.26, 0.02, 0.02, green); // Iberian peninsula
   drawLand(0.50, 0.27, 0.02, 0.02, green); // Italy
 
-  // === AFRICA ===
+  // Africa
   drawLand(0.50, 0.40, 0.06, 0.08, green); // West/Central Africa
   drawLand(0.52, 0.35, 0.05, 0.04, desert); // Sahara
   drawLand(0.53, 0.48, 0.04, 0.06, greenLight); // East Africa
   drawLand(0.52, 0.58, 0.03, 0.04, green); // Southern Africa
   drawLand(0.50, 0.32, 0.03, 0.02, green); // North Africa coast
 
-  // === ASIA ===
+  // Asia
   drawLand(0.60, 0.22, 0.06, 0.05, green); // Central Asia
   drawLand(0.65, 0.20, 0.08, 0.06, greenDark); // Siberia/Russia
   drawLand(0.62, 0.30, 0.04, 0.04, green); // China
@@ -119,15 +117,15 @@ function createEarthTexture(width: number, height: number): THREE.CanvasTexture 
   drawLand(0.64, 0.25, 0.04, 0.03, desert); // Middle East
   drawLand(0.70, 0.35, 0.03, 0.02, green); // Indonesia
 
-  // === AUSTRALIA ===
+  // Australia
   drawLand(0.78, 0.62, 0.05, 0.03, desert); // Australia interior
   drawLand(0.77, 0.60, 0.04, 0.02, green); // Australia coast
   drawLand(0.80, 0.66, 0.02, 0.02, greenLight); // Tasmania
 
-  // === ANTARCTICA ===
+  // Antarctica
   drawLand(0.50, 0.96, 0.30, 0.04, ice);
 
-  // === ARCTIC ===
+  // Arctic
   drawLand(0.50, 0.04, 0.15, 0.03, ice);
 
   // Add subtle terrain texture noise

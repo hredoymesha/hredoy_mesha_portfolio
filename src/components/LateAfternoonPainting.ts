@@ -46,7 +46,7 @@ export function drawLateAfternoonPainting(ctx: CanvasRenderingContext2D, W: numb
   const sx = 0.86 * W;
   const sy = 0.33 * H;
 
-  // ---------- value noise + fractal noise (seeded) ----------
+  // value noise + fractal noise (seeded)
   const perm = new Uint8Array(512);
   const order = Array.from({ length: 256 }, (_, i) => i);
   for (let i = 255; i > 0; i--) {
@@ -78,7 +78,7 @@ export function drawLateAfternoonPainting(ctx: CanvasRenderingContext2D, W: numb
     return s;
   };
 
-  // ---------- 1. sky: deep blue overhead, peach at the horizon ----------
+  // 1. sky: deep blue overhead, peach at the horizon
   const sky = ctx.createLinearGradient(0, 0, 0, w0);
   sky.addColorStop(0.0, 'rgb(52,98,168)');
   sky.addColorStop(0.28, 'rgb(98,148,205)');
@@ -88,7 +88,7 @@ export function drawLateAfternoonPainting(ctx: CanvasRenderingContext2D, W: numb
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, W, H);
 
-  // ---------- 2. clouds: noise field, lit from the sun side (light-marching) ----------
+  // 2. clouds: noise field, lit from the sun side (light-marching)
   {
     const cw = Math.ceil(W / 2);
     const ch = Math.ceil((w0 + 4 * k) / 2);
@@ -138,7 +138,7 @@ export function drawLateAfternoonPainting(ctx: CanvasRenderingContext2D, W: numb
     }
   }
 
-  // ---------- 3. sun bloom, crepuscular rays, sun disc ----------
+  // 3. sun bloom, crepuscular rays, sun disc
   ctx.save();
   ctx.globalCompositeOperation = 'screen';
   const bloom = ctx.createRadialGradient(sx, sy, 0, sx, sy, 430 * k);
@@ -182,7 +182,7 @@ export function drawLateAfternoonPainting(ctx: CanvasRenderingContext2D, W: numb
   ctx.arc(sx - 3 * k, sy - 3 * k, 15 * k, 0, 7);
   ctx.fill();
 
-  // ---------- 4. hills: atmospheric perspective, light from the right ----------
+  // 4. hills: atmospheric perspective, light from the right
   const hills: Array<{ hy: number; amp: number; col: RGB; seed: number }> = [
     { hy: 0.565, amp: 34, col: [190, 166, 186], seed: 1.3 },
     { hy: 0.598, amp: 30, col: [158, 154, 150], seed: 2.9 },
@@ -224,7 +224,7 @@ export function drawLateAfternoonPainting(ctx: CanvasRenderingContext2D, W: numb
     ctx.fillRect(0, ridge(hl, W * 0.5) - 50 * k, W, w0 - ridge(hl, W * 0.5) + 54 * k);
   });
 
-  // ---------- 5. river: mirrors sky and hills, with glitter ----------
+  // 5. river: mirrors sky and hills, with glitter
   const water = ctx.createLinearGradient(0, w0, 0, w1);
   water.addColorStop(0, 'rgb(238,190,142)');
   water.addColorStop(0.35, 'rgb(150,160,160)');
@@ -277,7 +277,7 @@ export function drawLateAfternoonPainting(ctx: CanvasRenderingContext2D, W: numb
   }
   ctx.restore();
 
-  // ---------- 6. near bank: warm, sunlit earth ----------
+  // 6. near bank: warm, sunlit earth
   const bank = ctx.createLinearGradient(0, w1, 0, H);
   bank.addColorStop(0, 'rgb(132,108,62)');
   bank.addColorStop(0.5, 'rgb(98,82,48)');
@@ -291,7 +291,7 @@ export function drawLateAfternoonPainting(ctx: CanvasRenderingContext2D, W: numb
   ctx.fillStyle = wash;
   ctx.fillRect(0, w1, W, H - w1);
 
-  // ---------- 7. painterly brush pass (samples the colours painted so far) ----------
+  // 7. painterly brush pass (samples the colours painted so far)
   const base = ctx.getImageData(0, 0, W, H).data;
   const sample = (x: number, y: number): RGB => {
     const xi = Math.min(W - 1, Math.max(0, x | 0));
@@ -347,7 +347,7 @@ export function drawLateAfternoonPainting(ctx: CanvasRenderingContext2D, W: numb
     ctx.stroke();
   }
 
-  // ---------- 8. tree geometry (recursive), then its long shadow, then the tree ----------
+  // 8. tree geometry (recursive), then its long shadow, then the tree
   type Seg = { x1: number; y1: number; x2: number; y2: number; wd: number };
   const segs: Seg[] = [];
   const tips: Array<[number, number]> = [];
@@ -435,7 +435,7 @@ export function drawLateAfternoonPainting(ctx: CanvasRenderingContext2D, W: numb
     }
   });
 
-  // ---------- 9. grass blades, reeds ----------
+  // 9. grass blades, reeds
   for (let i = 0; i < 520; i++) {
     const gx = rr(0, W);
     const gy = rr(w1 + 6 * k, H);
@@ -494,7 +494,7 @@ export function drawLateAfternoonPainting(ctx: CanvasRenderingContext2D, W: numb
     }
   });
 
-  // ---------- 10. the wanderer: cloak, hood, staff, long shadow ----------
+  // 10. the wanderer: cloak, hood, staff, long shadow
   const px = 0.4 * W;
   const py = 0.86 * H;
   const fh = 68 * k; // figure height
@@ -586,7 +586,7 @@ export function drawLateAfternoonPainting(ctx: CanvasRenderingContext2D, W: numb
   ctx.lineTo(px - 16.8 * k, py - fh * 1.08);
   ctx.stroke();
 
-  // ---------- 11. a few birds, atmosphere, grade ----------
+  // 11. a few birds, atmosphere, grade
   ctx.strokeStyle = 'rgba(52,56,84,0.62)';
   ctx.lineWidth = 1.5 * k;
   for (let i = 0; i < 6; i++) {

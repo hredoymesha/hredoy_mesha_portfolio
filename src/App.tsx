@@ -123,7 +123,7 @@ export default function App() {
     }
   };
 
-  // Initialize theme from html attribute or localStorage
+  // Theme from the html attribute or localStorage
   useEffect(() => {
     try {
       const saved = localStorage.getItem('theme') as 'light' | 'dark' | null;
@@ -1137,7 +1137,7 @@ export default function App() {
           </section>
         )}
 
-        {/* CONTACT SECTION (Balanced 7:5 2-Column Responsive Architecture) */}
+        {/* CONTACT SECTION */}
         <section id="contact" className="py-16 md:py-24">
           <div className="wrap">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
@@ -1162,7 +1162,7 @@ export default function App() {
 
               {/* Right Column (5 cols): LinkedIn Card, Dual Clocks & Direct Delivery, Quick Topics */}
               <div className="lg:col-span-5 flex flex-col gap-5 mt-8 lg:mt-32">
-                {/* Point 6: Dedicated Professional LinkedIn Card */}
+                {/* LinkedIn card */}
                 <aside className="print-hide border border-[var(--line-strong)] rounded-2xl bg-[var(--panel)] p-5 sm:p-6 shadow-sm">
                   <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-3 border-b border-[var(--line)]">
                     <div className="flex items-center gap-2">
@@ -1194,7 +1194,7 @@ export default function App() {
                   </a>
                 </aside>
 
-                {/* Point 8: Live Dual Working Timezones & Direct Delivery Panel */}
+                {/* Working time zones and direct delivery */}
                 <aside className="print-hide border border-[var(--line)] rounded-2xl bg-[var(--panel)] p-5 shadow-sm">
                   <span className="block text-xs uppercase tracking-widest font-semibold text-[var(--faint)] mb-4 font-[var(--ui)]">
                     Dual Working Timezones

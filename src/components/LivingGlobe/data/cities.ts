@@ -1,5 +1,4 @@
-// LivingGlobe — Verified city coordinates
-// Coordinates verified against official geographic data
+// City markers for the globe (latitude and longitude).
 
 import { City } from './types';
 

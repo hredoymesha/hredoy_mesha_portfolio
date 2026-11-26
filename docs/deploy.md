@@ -2,7 +2,7 @@
 
 The site needs a server that runs Node.js and Python at the same time, so it cannot go on GitHub Pages or a plain static host. The `Dockerfile` in the project root builds one image that contains both. Any host that runs Docker can use it.
 
-The simple route described here is a small rented server (a VPS) with Docker, plus Caddy, which fetches and renews the HTTPS certificate on its own. I used a Hetzner server in Helsinki and a domain bought at Cloudflare, but nothing here depends on those two.
+The simple route described here is a small rented server (a VPS) with Docker, plus Caddy, which fetches and renews the HTTPS certificate on its own. The live site runs as a Docker web service on Render, built from the same `Dockerfile`, with the domain's DNS at Cloudflare set to "DNS only". Nothing in the steps below depends on a particular host.
 
 ## What you need
 
@@ -10,7 +10,7 @@ The simple route described here is a small rented server (a VPS) with Docker, pl
 - A domain name whose DNS you can edit.
 - A Gmail account with an app password if you want contact messages e-mailed to you.
 
-Outgoing mail ports 25 and 465 are blocked on many hosts, Hetzner included. The settings below use port 587, which works there.
+Outgoing mail ports 25 and 465 are blocked on many hosts. The settings below use port 587, which most hosts allow.
 
 ## Steps
 

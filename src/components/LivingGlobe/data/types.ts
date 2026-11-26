@@ -1,4 +1,4 @@
-// LivingGlobe — Type contracts and data schemas
+// Types for the globe.
 
 export type GlobeTab = 'living-globe' | 'day-night';
 

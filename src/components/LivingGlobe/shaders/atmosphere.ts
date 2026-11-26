@@ -1,6 +1,4 @@
-// LivingGlobe — Atmosphere glow shader
-// Renders a subtle atmospheric rim glow around the Earth
-// using Fresnel-like effect (stronger at edges, weaker at center)
+// Atmosphere glow: a Fresnel-style rim, stronger at the edges and weaker at the centre.
 
 export const atmosphereVertexShader = /* glsl */ `
   varying vec3 vNormal;

@@ -44,7 +44,7 @@ try {
   R.ok(/No citation output yet/.test(await page.locator(".citecraft-results").innerText()), "empty state is shown before any reference is added");
   await page.locator("details.citecraft-tools summary").click();
 
-  // ---- add ----
+  // add
   R.ok((await toolsAutoOpened(page)) === false, "the references/output section can be collapsed again");
   await addReference(page, ARTICLE);
   R.ok(await toolsAutoOpened(page), "after adding the first reference the output section opens by itself (the citation is visible without extra clicks)");
@@ -60,7 +60,7 @@ try {
   bib = await bibTexts(page);
   R.ok(bib.some((e) => /বাংলা সাহিত্যের ইতিহাস/.test(e)) && bib.some((e) => /সেন/.test(e)), "Bengali (non-Latin) titles and author names are kept in the output");
 
-  // ---- styles ----
+  // styles
   const seen = new Map();
   for (const style of ["apa", "mla", "chicago-author-date", "chicago-notes", "ieee", "vancouver"]) {
     await page.getByLabel("Citation style").selectOption(style);
@@ -73,7 +73,7 @@ try {
   R.ok(new Set(seen.values()).size >= 4, "the six styles produce visibly different citation text");
   R.ok(/^\[?1\]?|\(1\)|1/.test(seen.get("ieee").split(" | ")[0]), "IEEE/Vancouver citations are numbered");
 
-  // ---- narrative ----
+  // narrative
   await page.getByLabel("Citation style").selectOption("apa"); await page.waitForTimeout(500);
   if (await page.getByLabel("Citation form").count()) {
     await page.getByLabel("Citation form").selectOption("narrative"); await page.waitForTimeout(600);
@@ -82,7 +82,7 @@ try {
     await page.getByLabel("Citation form").selectOption("parenthetical"); await page.waitForTimeout(400);
   } else R.ok(false, "APA offers a narrative citation form");
 
-  // ---- copy ----
+  // copy
   await outputs(page).first().getByRole("button", { name: "Copy" }).click();
   const clip1 = await page.evaluate(() => navigator.clipboard.readText());
   const firstCite = (await citationTexts(page))[0];
@@ -91,7 +91,7 @@ try {
   const clip2 = await page.evaluate(() => navigator.clipboard.readText());
   R.ok(clip2.split("\n").length === 4 && /Rahman|Rahman/.test(clip2), "Copy bibliography copies all four entries");
 
-  // ---- search, sort, edit, delete ----
+  // search, sort, edit, delete
   await page.getByPlaceholder("Search title or author").fill("nguyen");
   R.ok((await page.locator(".citecraft-reference-list li").count()) === 1, "search by author filters the list");
   await page.getByPlaceholder("Search title or author").fill("zzz-no-match");
@@ -115,12 +115,12 @@ try {
   await page.getByRole("button", { name: "Delete Employee Retention in Finland" }).click(); await page.waitForTimeout(500);
   R.ok((await page.locator(".citecraft-reference-list li").count()) === 3 && !(await bibTexts(page)).some((e) => /Employee Retention/.test(e)), "Delete removes the reference and its output");
 
-  // ---- duplicates ----
+  // duplicates
   await addReference(page, { type: "book", fields: { "Title *": "Governing Algorithms, Second Edition", Authors: "Nguyen, Linh", "Publication date": "2022", Publisher: "Local Press" } });
   await page.waitForTimeout(800);
   R.ok(await page.locator(".citecraft-duplicate-box").isVisible(), "an identical reference triggers a possible-duplicate suggestion (nothing is merged)");
 
-  // ---- export: every format is a real download ----
+  // export: every format is a real download
   const dl = {};
   const formats = ["citecraft-json", "csl-json", "bibtex", "ris", "csv", "plain-text", "markdown", "html", "docx"];
   await toolsOpen(page);
@@ -138,7 +138,7 @@ try {
   R.ok(/Governing Algorithms/.test(dl["plain-text"].text) && /Governing Algorithms/.test(dl.markdown.text) && /<(p|li|div)[ >]/.test(dl.html.text) && !/<script/i.test(dl.html.text), "plain text, Markdown and HTML bibliographies contain the titles (HTML has no script)");
   R.ok(dl.docx.buf.slice(0, 2).toString() === "PK" && dl.docx.name.endsWith(".docx"), "the Word export is a real .docx (zip) file");
 
-  // ---- import round trips ----
+  // import round trips
   const importOf = async (fmt, text, name) => {
     await page.getByLabel("Import format").selectOption(fmt);
     await page.setInputFiles('input[type="file"]', { name, mimeType: "text/plain", buffer: Buffer.from(text) });
@@ -153,7 +153,7 @@ try {
   }
   await page.setInputFiles('input[type="file"]', []).catch(() => {});
 
-  // ---- errors ----
+  // errors
   const problemsBefore = problems.length; // the server answers deliberately broken imports with HTTP 422; the browser logs those as console errors
   await importOf("bibtex", "this is not a bibliography {{{", "bad.bib");
   const errText = (await page.locator(".citecraft-error").count()) ? await page.locator(".citecraft-error").first().innerText() : "";
@@ -162,13 +162,13 @@ try {
   await importOf("citecraft-json", "{not json", "bad.json");
   R.ok((await page.locator(".citecraft-error").count()) > 0 && (await page.locator(".citecraft-reference-list li").count()) === 4, "invalid JSON import shows an error and keeps the list");
 
-  // ---- persistence ----
+  // persistence
   await page.reload({ waitUntil: "domcontentloaded" }); await page.waitForSelector(".citecraft-panel"); await page.waitForTimeout(1200);
   await toolsOpen(page);
   const nAfter = await page.locator(".citecraft-reference-list li").count(); const bAfter = (await bibTexts(page)).length;
   R.ok(nAfter === 4 && bAfter === 4, `references and output survive a page reload (browser storage): list ${nAfter}, output ${bAfter}, stored ${await page.evaluate(() => { try { return JSON.parse(localStorage.getItem("citecraft.references.v1") || "[]").length; } catch { return "unreadable"; } })}`);
 
-  // ---- clear all ----
+  // clear all
   await page.getByRole("button", { name: "Clear all" }).click(); await page.waitForTimeout(500);
   R.ok((await page.locator(".citecraft-reference-list li").count()) === 0 && /Add your first source/.test(await page.locator(".citecraft-workspace").innerText()), "Clear all empties the list");
   R.ok(await page.getByRole("button", { name: /Export bibliography/ }).isDisabled(), "export is disabled when there are no references");

@@ -13,7 +13,7 @@
 
 Only the contact form stores anything: name, e-mail, subject, message, IP address, browser string and time, in `logs/contact_submissions.jsonl`. That file is ignored by git and never served. The same details go in the e-mail to me. Messages marked anonymous hide the name and e-mail but not the IP address. The CiteCraft service stores nothing. The site has no analytics and no cookies, and loads nothing from other sites.
 
-Because IP addresses count as personal data in the EU, a short notice near the form is a good idea, and old messages should be deleted when they are no longer needed.
+IP addresses count as personal data in the EU. The contact form has no privacy notice yet, and old messages are not deleted automatically.
 
 The IP address is taken from the request through `TRUST_PROXY_HOPS` proxy hops. The number must match the real setup: 0 on a laptop, 1 behind Caddy or most hosts, 2 behind Cloudflare's proxy and a host. A wrong number lets visitors fake their address or logs the proxy's address instead.
 

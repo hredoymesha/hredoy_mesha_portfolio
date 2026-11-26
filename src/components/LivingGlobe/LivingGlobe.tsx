@@ -1,5 +1,4 @@
-// LivingGlobe — Main React component
-// Orchestrates the globe renderer, tab state, and UI
+// The globe section: renderer, tabs and controls.
 
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { GlobeRenderer, setEarthTexturesAvailable } from './core/GlobeRenderer';
@@ -70,7 +69,7 @@ export function LivingGlobe() {
     return () => clearInterval(interval);
   }, [activeTab]);
 
-  // Initialize globe renderer
+  // Create the globe renderer
   useEffect(() => {
     if (!webGLAvailable || !containerRef.current) return;
 

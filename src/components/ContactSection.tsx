@@ -92,7 +92,7 @@ export function ContactSection({ email, activeTab, onTabChange }: ContactSection
           <h3 className="text-xl font-bold text-[var(--ink)]">Send a Message</h3>
         </div>
 
-        {/* Tab Switcher - "Protocol" removed per Point 9 */}
+        {/* Tab switcher */}
         <div className="inline-flex max-w-full flex-wrap items-center bg-[var(--panel-2)] p-1 rounded-xl border border-[var(--line)] self-start font-[var(--ui)] text-xs">
           <button
             type="button"

@@ -25,7 +25,7 @@ export function drawMonsoonNightPainting(ctx: CanvasRenderingContext2D, W: numbe
   const rgb = (c: number[]) => 'rgb(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ')';
   const hor = 0.6;
 
-  // --- sky gradient ---
+  // sky gradient
   const g = ctx.createLinearGradient(0, 0, 0, H);
   g.addColorStop(0.0, 'rgb(16,20,30)');
   g.addColorStop(0.45, 'rgb(33,37,50)');
@@ -35,7 +35,7 @@ export function drawMonsoonNightPainting(ctx: CanvasRenderingContext2D, W: numbe
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
 
-  // --- soft cloud modulation (blurred noise pass) ---
+  // soft cloud modulation (blurred noise pass)
   ctx.save();
   ctx.globalAlpha = 0.5;
   for (let i = 0; i < 260; i++) {
@@ -51,7 +51,7 @@ export function drawMonsoonNightPainting(ctx: CanvasRenderingContext2D, W: numbe
   }
   ctx.restore();
 
-  // --- moon glow + disc ---
+  // moon glow + disc
   const mx = 0.33 * W;
   const my = 0.28 * H;
   const glow = ctx.createRadialGradient(mx, my, 0, mx, my, 300 * k);
@@ -65,7 +65,7 @@ export function drawMonsoonNightPainting(ctx: CanvasRenderingContext2D, W: numbe
   ctx.arc(mx, my, 30 * k, 0, 7);
   ctx.fill();
 
-  // --- hills (sine silhouettes, receding) ---
+  // hills (sine silhouettes, receding)
   const hills = [
     { hy: 0.57, amp: 36, col: [78, 86, 100], op: 0.55 },
     { hy: 0.6, amp: 30, col: [54, 62, 74], op: 0.78 },
@@ -90,7 +90,7 @@ export function drawMonsoonNightPainting(ctx: CanvasRenderingContext2D, W: numbe
     ctx.restore();
   });
 
-  // --- water band ---
+  // water band
   const w0 = 0.7 * H;
   const w1 = 0.8 * H;
   const wg = ctx.createLinearGradient(0, w0, 0, w1);
@@ -107,14 +107,14 @@ export function drawMonsoonNightPainting(ctx: CanvasRenderingContext2D, W: numbe
     ctx.fillRect(mx - half, y, half * 2, 1);
   }
 
-  // --- foreground ---
+  // foreground
   const fg = ctx.createLinearGradient(0, w1, 0, H);
   fg.addColorStop(0, 'rgb(26,30,35)');
   fg.addColorStop(1, 'rgb(10,13,16)');
   ctx.fillStyle = fg;
   ctx.fillRect(0, w1, W, H - w1);
 
-  // --- sample base colours for the brush pass ---
+  // sample base colours for the brush pass
   const base = ctx.getImageData(0, 0, W, H).data;
   const sample = (x: number, y: number) => {
     const xi = Math.min(W - 1, Math.max(0, x | 0));
@@ -123,7 +123,7 @@ export function drawMonsoonNightPainting(ctx: CanvasRenderingContext2D, W: numbe
     return [base[i], base[i + 1], base[i + 2]];
   };
 
-  // --- painterly brush pass ---
+  // painterly brush pass
   const N = Math.min(20000, Math.round(W * H * 0.038));
   ctx.lineCap = 'round';
   for (let i = 0; i < N; i++) {
@@ -165,7 +165,7 @@ export function drawMonsoonNightPainting(ctx: CanvasRenderingContext2D, W: numbe
     ctx.stroke();
   }
 
-  // --- far tree line along the water's edge ---
+  // far tree line along the water's edge
   ctx.strokeStyle = 'rgb(20,24,30)';
   for (let x = 0; x < W; x += 6 * k) {
     ctx.lineWidth = rr(3, 6) * k;
@@ -175,7 +175,7 @@ export function drawMonsoonNightPainting(ctx: CanvasRenderingContext2D, W: numbe
     ctx.stroke();
   }
 
-  // --- ancient tree (recursive) ---
+  // ancient tree (recursive)
   const tips: Array<[number, number]> = [];
   function branch(x: number, y: number, ang: number, ln: number, wd: number, depth: number) {
     if (depth === 0 || ln < 8 * k) {
@@ -225,7 +225,7 @@ export function drawMonsoonNightPainting(ctx: CanvasRenderingContext2D, W: numbe
     }
   });
 
-  // --- reeds near the water, right ---
+  // reeds near the water, right
   ctx.strokeStyle = 'rgb(12,16,20)';
   for (let i = 0; i < 18; i++) {
     const rx = 0.78 * W + rr(-30, 60) * k;
@@ -237,7 +237,7 @@ export function drawMonsoonNightPainting(ctx: CanvasRenderingContext2D, W: numbe
     ctx.stroke();
   }
 
-  // --- lone wanderer with staff ---
+  // lone wanderer with staff
   const px = 0.6 * W;
   const py = 0.86 * H;
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
@@ -264,14 +264,14 @@ export function drawMonsoonNightPainting(ctx: CanvasRenderingContext2D, W: numbe
   ctx.lineTo(px + 10 * k, py - 40 * k);
   ctx.stroke();
 
-  // --- mist over the water ---
+  // mist over the water
   ctx.save();
   ctx.globalAlpha = 0.18;
   ctx.fillStyle = 'rgb(205,210,214)';
   ctx.fillRect(0, w0 - 12 * k, W, w1 - w0 + 20 * k);
   ctx.restore();
 
-  // --- vignette ---
+  // vignette
   const vg = ctx.createRadialGradient(W / 2, H * 0.45, W * 0.2, W / 2, H * 0.45, W * 0.75);
   vg.addColorStop(0, 'rgba(0,0,0,0)');
   vg.addColorStop(1, 'rgba(0,0,0,0.5)');

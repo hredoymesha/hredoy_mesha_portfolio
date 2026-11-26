@@ -1,7 +1,6 @@
 /**
  * Case-study pages for the Selected Work items. Each page lives at /work/<slug>.
- * The facts come from the public README files of the projects on GitHub; nothing here is invented.
- * Keep the list of slugs in step with CASE_STUDY_PATHS in server/app.ts (a test checks that they match).
+ * Keep the slugs in step with CASE_STUDY_PATHS in server/app.ts; a test checks that they match.
  */
 export interface CaseSection {
   heading: string;
@@ -80,7 +79,7 @@ export const caseStudies: CaseStudy[] = [
       {
         heading: 'Limits',
         bullets: [
-          'It is not on the Chrome Web Store. You install it from source or from a release ZIP.',
+          'It is on the Chrome Web Store. You can also install it from source or from a release ZIP.',
           'Browsers hide some things from extensions: Set-Cookie headers and HttpOnly cookies, and TLS details. Server-side flaws need controlled testing that DevForge does not do.',
           'Library versions in the security report are read from file names and can be wrong.'
         ]
