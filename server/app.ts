@@ -188,7 +188,7 @@ export function createApp(opts: AppOptions) {
   const everyone = new SlidingWindowLimiter(opts.globalRateLimit, opts.rateWindowMs);
   const citecraftLimiter = new SlidingWindowLimiter(120, 60_000);
 
-  // ---- security headers ----
+  // security headers
   app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -238,7 +238,7 @@ export function createApp(opts: AppOptions) {
     res.json({ ok: true, mail: opts.mailer ? 'configured' : 'not-configured', citecraft: opts.citecraftPort ? 'enabled' : 'disabled' });
   });
 
-  // ---- contact form ----
+  // contact form
   app.post('/api/contact', async (req: Request, res: Response) => {
     try {
       if (!sameOriginAllowed(req)) {
@@ -357,7 +357,7 @@ export function createApp(opts: AppOptions) {
       if (!saved && !delivered) {
         return res.status(500).json({ success: false, error: 'Your message could not be processed. Please write directly by e-mail.' });
       }
-      // The reason is shown to the visitor only when the site runs on the owner's own computer (not in production).
+      // The reason is shown to the visitor only when the site runs locally, not in production.
       const extra = opts.isProduction ? {} : { debug };
       if (delivered) {
         return res.status(200).json({ success: true, delivered: true, saved, reason, ...extra, message: 'Your message has been delivered.' });
@@ -376,7 +376,7 @@ export function createApp(opts: AppOptions) {
     }
   });
 
-  // ---- CiteCraft: proxy to the loopback-only Python API ----
+  // CiteCraft: proxy to the loopback-only Python API
   app.use('/api/citecraft', async (req: Request, res: Response) => {
     try {
       const backendPath = req.originalUrl.replace(/^\/api\/citecraft/, '') || '/';
@@ -398,7 +398,7 @@ export function createApp(opts: AppOptions) {
 
   app.use('/api', (_req, res) => res.status(404).json({ error: 'Not found' }));
 
-  // ---- built front-end ----
+  // built front-end
   if (opts.distDir) {
     const dist = opts.distDir;
     app.use(
@@ -419,7 +419,7 @@ export function createApp(opts: AppOptions) {
     });
   }
 
-  // ---- errors (bad JSON, oversized bodies) are answered as JSON, never as stack traces ----
+  // errors (bad JSON, oversized bodies) are answered as JSON, never as stack traces
   app.use((err: Error & { status?: number; type?: string }, _req: Request, res: Response, next: NextFunction) => {
     if (res.headersSent) return next(err);
     const status = err.status && err.status >= 400 && err.status < 500 ? err.status : 500;

@@ -135,7 +135,7 @@ export interface CertificationGroup {
   items: CertificationItem[];
 }
 
-/** Bengali version of the introduction (hero + About). Written for Bengali readers, not word-for-word; to be proofread by the owner. */
+/** Bengali version of the introduction (hero and About). */
 export interface IntroTranslation {
   headline: { lead: string; em: string };
   summary: string[];
@@ -304,7 +304,7 @@ export const siteData: SiteData = {
       type: "Working paper",
       title: "One Payment, Many Labels: Why Extortion Statistics Cannot Be Compared across Countries, and What Bangladesh Reveals",
       desc: "A review of why extortion statistics cannot be set side by side across countries, with Bangladesh as a detailed case.",
-      // Working abstract. The source count (76) is not final and may grow; update it here when it changes.
+      // Working abstract. The source count (76) may still change.
       abstract: "Many countries try to count extortion, yet the figures they produce cannot be set side by side. This article reviews 76 sources, including international standards, official statistics, laws, police data, research and an expert index, drawn mainly from Latin America and South Asia, with Bangladesh as a detailed case. It identifies four ways of measuring extortion: victimisation surveys, police and prosecutors' records, expert-perception scores and direct observation. Where business surveys ask about it, as in Mexico, extortion can be the most frequent crime against businesses, while only a small share is recorded by the authorities. Comparison breaks down for several reasons. The same act, a payment demanded under pressure by a public official, carries at least five different labels, which count it as extortion in some systems, as bribery in others, and outside the extortion category in one; sources also differ on attempts, mode of contact, repeated demands and units of count, and their series are broken by changes in law and method. Bangladesh shows the consequences. Its national citizen perception survey does not ask about extortion, two other household surveys combine it with bribery, and the police crime tables reviewed contain no extortion category. Drawing on items that already exist elsewhere, the article proposes, as an untested idea, a short survey add-on that records who made a demand, whether anything was paid and whether the demand recurs, so that extortion could be counted separately from bribery.",
       link: "",
       doi: ""
@@ -478,8 +478,7 @@ export const siteData: SiteData = {
       link: "https://github.com/hredoymesha/excel-retail-operations-dashboard",
       linkText: "Source"
     },
-    // Hidden from Selected Work for now. Its case study page (/work/fundraising-kpi-analysis) and picture stay in place.
-    // To show it again, remove the two comment markers (the slash-star and star-slash lines) around it.
+    // Hidden from Selected Work for now. Its case-study page and picture stay.
     /*
     {
       tag: "Python · KPI",

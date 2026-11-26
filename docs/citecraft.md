@@ -49,4 +49,4 @@ CSV is a plain interchange format. Look at untrusted values before you open a fi
 
 - Up to 100 references per request. Import and export requests can be 2 MB, other requests 64 KB.
 - The service is meant to sit behind the portfolio server. It has no login and should not be put on the internet by itself.
-- Python 3.12 is the version I tested with.
+- The Docker image uses Python 3.12. The CiteCraft tests have also been run on Python 3.13.

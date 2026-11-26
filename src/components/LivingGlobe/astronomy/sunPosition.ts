@@ -1,4 +1,4 @@
-// LivingGlobe — Astronomical calculations
+// Sun position for the day and night shading.
 // Implements simplified solar position algorithm based on Jean Meeus,
 // "Astronomical Algorithms", 2nd edition, 1998.
 //

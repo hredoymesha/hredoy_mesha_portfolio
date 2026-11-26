@@ -1,6 +1,4 @@
-// LivingGlobe — Day/Night terminator shader
-// Renders a smooth transition between day and night hemispheres
-// with a realistic twilight band
+// Day and night shader: a smooth transition between the two sides, with a twilight band.
 
 export const dayNightVertexShader = /* glsl */ `
   varying vec3 vWorldNormal;

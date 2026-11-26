@@ -43,7 +43,7 @@ ok(/^logs\/$/m.test(gi) && /^\.env$/m.test(gi) && /cv-\*\.pdf/.test(gi), ".gitig
 ok(!/<script(?![^>]*\bsrc=)(?![^>]*application\/ld\+json)[^>]*>/.test(read(path.join(root, "index.html"))), "index.html has no inline script (Content-Security-Policy)");
 ok(!/\sstyle=/.test(read(path.join(root, "index.html"))), "index.html has no inline style attribute");
 
-// ---- built site ----
+// built site
 const dist = path.join(root, "dist");
 if (!fs.existsSync(dist)) { ok(false, "dist/ exists (run npm run build first)"); }
 else {
