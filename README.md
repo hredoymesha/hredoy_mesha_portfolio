@@ -70,7 +70,6 @@ The site needs a server that runs Node and Python, so GitHub Pages cannot host i
 
 ## Limits
 
-- The Bengali introduction should be read by a native speaker.
 - The globe can be slow on a computer without a graphics card. Set `SHOW_LIVING_GLOBE` to `false` in `src/App.tsx` to hide it.
 - With the browser text size at 300% on a 390 px wide phone, a few lines (years in the certificate list, the "View case study" link) still run past the edge.
 - I have not tried the site on real phones, Safari, Firefox, or a hosting company's servers.
